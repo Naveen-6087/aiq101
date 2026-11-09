@@ -1,9 +1,10 @@
-docs/
 node_modules/
-.env
-*.venv/
+dist/
+.venv*/
 __pycache__/
-*.pyc
-demos/*/notes/
-demos/*/research/
-demos/coingecko-crypto-agent/node_modules/
+.pytest_cache/
+*.log
+.env
+.env.*
+!.env.example
+*.armord-bak
