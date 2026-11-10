@@ -1,0 +1,12 @@
+{
+  "name": "armord",
+  "version": "0.1.0",
+  "description": "Gate Gemini CLI tool calls through the local armord ArmorIQ decision daemon.",
+  "contextFileName": "GEMINI.md",
+  "mcpServers": {
+    "armord-plan": {
+      "command": "armord",
+      "args": ["mcp-plan", "--host", "gemini"]
+    }
+  }
+}

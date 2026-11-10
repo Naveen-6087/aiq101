@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "BeforeTool": [
+      {
+        "matcher": "*",
+        "hooks": [{ "name": "armord", "type": "command", "command": "armord hook gemini", "timeout": 10000 }]
+      }
+    ]
+  }
+}
