@@ -1,0 +1,22 @@
+{
+  "name": "@armoriq-labs/devpack",
+  "version": "0.1.0",
+  "description": "ArmorIQ developer pack: docs MCP server, agent skills and a scaffolder for governed agents.",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "bin": {
+    "armoriq-docs-mcp": "docs-mcp/server.mjs",
+    "create-armoriq-agent": "create-armoriq-agent/bin/create.mjs"
+  },
+  "scripts": {
+    "index": "node docs-mcp/build-index.mjs",
+    "snapshot": "node create-armoriq-agent/build-snapshot.mjs",
+    "build": "npm run index && npm run snapshot",
+    "test": "node --test \"docs-mcp/test/*.test.mjs\" \"create-armoriq-agent/test/*.test.mjs\" \"skills/test/*.test.mjs\""
+  },
+  "devDependencies": {
+    "yaml": "^2.6.0"
+  }
+}
