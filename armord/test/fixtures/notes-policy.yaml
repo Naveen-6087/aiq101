@@ -1,0 +1,13 @@
+apiVersion: armor.io/v2
+kind: Policy
+metadata: {name: notes}
+target: {device: local}
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: block
+    rules:
+      read_note: allow
+      publish_note: hold
+      delete_note: block
