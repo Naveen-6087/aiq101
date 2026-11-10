@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "armord-openhands"
+version = "0.1.0"
+description = "OpenHands security analyzer that asks the local ArmorIQ decision daemon (armord) about every action."
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+# The analyzer subclasses the real SecurityAnalyzerBase when this is installed (Python >= 3.12).
+openhands = ["openhands-sdk>=1.0"]
+test = ["pytest>=8"]
+
+[tool.setuptools]
+packages = ["armord_openhands"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
