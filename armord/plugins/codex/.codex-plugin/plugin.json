@@ -1,0 +1,6 @@
+{
+  "name": "armord",
+  "version": "0.1.0",
+  "description": "Gate Codex CLI shell, apply_patch and MCP calls through the local armord ArmorIQ decision daemon.",
+  "license": "MIT"
+}
