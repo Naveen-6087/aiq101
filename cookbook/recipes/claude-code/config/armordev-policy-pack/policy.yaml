@@ -1,0 +1,84 @@
+# ArmorDev policy pack, summary.
+#
+# This file is a readable summary for the recipe browser's Policy tab. Neither plugin reads
+# it. The files the plugins load are:
+#   armorclaude/armordev.json          ArmorClaude armor.policy.v1 PolicyProfile
+#   armorcodex/policy-profiles.json    ArmorCodex saved profile "armordev"
+# offline/test.mjs fails if this summary and armorclaude/armordev.json drift apart.
+#
+# ArmorClaude evaluates every statement and the strictest match wins
+# (block over hold over allow); anything unmatched falls to default_action.
+# `codex:` names the matching ArmorCodex rule, or none.
+name: armordev
+version: v1
+scope:
+  target_type: coding-agent
+  target: claude-code
+  caller: all
+default_action: allow
+rules:
+  # Secret and key quarantine: .env files (not .env.example), ~/.ssh, ~/.aws, id_rsa style
+  # keys, *.pem / *.key / *.p12 / *.pfx, credentials files, .netrc, .npmrc, .pypirc,
+  # .git-credentials, .docker/config.json, .kube/config.
+  - id: forbid-secret-files
+    tool: Read, Write, Edit, MultiEdit, Grep, Glob
+    action: block
+    when: file_path or path matches a secret pattern
+    codex: deny-secrets
+  - id: forbid-secret-shell
+    tool: Bash, PowerShell
+    action: block
+    when: the command text mentions a secret path
+    codex: deny-secrets
+
+  # Destructive command barrier.
+  - id: forbid-destructive-shell
+    tool: Bash, PowerShell
+    action: block
+    when: rm -r / rm -rf, git reset --hard, git clean -f, dd of=, mkfs, shred, wipefs, Remove-Item -Recurse
+    codex: deny-destructive-shell
+  - id: forbid-force-push
+    tool: Bash, PowerShell
+    action: block
+    when: git push --force, --force-with-lease, -f, or a +refspec
+    codex: deny-force-push
+  - id: forbid-push-protected-branch
+    tool: Bash, PowerShell
+    action: block
+    when: git push naming main or master as the target
+    codex: deny-push-protected-branch
+
+  # Network egress through the shell.
+  - id: forbid-pipe-to-shell
+    tool: Bash, PowerShell
+    action: block
+    when: curl or wget piped into sh, bash, python, node; sh -c "$(curl ...)"; iwr | iex
+    codex: deny-pipe-to-shell
+  - id: hold-network-shell
+    tool: Bash, PowerShell
+    action: hold
+    when: curl, wget, nc, scp, rsync, ssh, ftp, Invoke-WebRequest
+    codex: approve-network-shell
+
+  # Package publishing waits for a human.
+  - id: hold-package-publish
+    tool: Bash, PowerShell
+    action: hold
+    when: npm / pnpm / yarn publish, cargo publish, twine upload, poetry / uv publish, gem push, gh release create, docker push
+    codex: approve-package-publish
+
+  # Everything else in the shell asks first, unless it is a known test, build, or read only command.
+  - id: hold-unlisted-shell
+    tool: Bash, PowerShell
+    action: hold
+    when: the command is not on the test and build list below
+    codex: none
+  - id: allow-test-build
+    tool: Bash, PowerShell
+    action: allow
+    when: one npm test/build/lint, pytest, go test, cargo test/build, make, tsc, git status/diff/log/add/commit, ls, cat, grep ... with no ; && || > or $( ), optionally piped into grep, head, tail, wc, jq
+    codex: allow-test-build
+  - id: allow-read-tools
+    tool: Read, Grep, Glob
+    action: allow
+    codex: none

@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../recipe.schema.json
+# A config lane recipe: no variant, and tested_with is optional.
+schema: 1
+title: Lock secrets folders in Claude Code with ArmorClaude
+summary: A ready ArmorClaude policy that blocks reads of secrets folders and holds deploy commands for approval.
+framework: claude-code
+language: config
+tier: community
+products: [armorclaude, policies]
+use_case: coding-agent
+demonstrates: [hold, block]
+authors: [octocat]
+siblings: [codex/config/lock-secrets]

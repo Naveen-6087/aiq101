@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Govern a Vercel AI SDK Support Bot with Intent Gateway
+summary: A Claude support bot on the Vercel AI SDK whose lookups pass, whose credit and account deletion are stopped by Intent Gateway, and who explains why.
+framework: vercel-ai-sdk
+language: typescript
+variant: js
+tier: community
+products: [intent-gateway, policies]
+use_case: support-ops
+tags: [vercel-ai-sdk, gateway, anthropic, claude, support-desk]
+demonstrates: [allow, block]
+authors: [Naveen-6087]
+requires:
+  services: [armoriq, anthropic]

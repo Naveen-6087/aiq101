@@ -1,0 +1,19 @@
+{
+  "name": "armoriq-github-write-guard",
+  "version": "1.0.0",
+  "description": "A GitHub agent where reads are allowed, writes are held for approval, and repository deletion is blocked",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "demo": "node demo.js",
+    "demo:offline": "node --import ./offline/register.mjs demo.js \"Search repositories for acme, open a pull request, then delete the repository\"",
+    "test:offline": "node offline/test.mjs"
+  },
+  "dependencies": {
+    "@armoriq/sdk": "0.6.10",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}

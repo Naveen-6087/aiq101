@@ -1,0 +1,56 @@
+{
+  "profiles": {
+    "armorops": {
+      "rules": [
+        {
+          "id": "deny-cloud-credentials",
+          "action": "deny",
+          "tool": "*",
+          "anyParam": {
+            "$matches": "(?:^|[\\\\/\\s\"'=:])\\.aws[\\\\/](?:credentials|config)(?:$|[\\s\"'`;|&)<>])|\\.kube[\\\\/]config(?:$|[\\s\"'`;|&)<>])|\\.terraform\\.d[\\\\/]credentials\\.tfrc\\.json|\\.config[\\\\/]gcloud(?:$|[\\\\/\\s\"'`;|&)<>])|(?:^|[\\\\/\\s\"'=:])\\.azure(?:$|[\\\\/\\s\"'`;|&)<>])|\\.tfstate(?:\\.backup)?(?:$|[\\s\"'`;|&)<>])"
+          }
+        },
+        {
+          "id": "deny-irreversible",
+          "action": "deny",
+          "tool": "bash",
+          "params": {
+            "command": {
+              "$matches": "\\bterraform\\s+(?:[^;&|\\n]*\\s)?destroy\\b|\\bterraform\\s+apply\\b[^;&|\\n]*\\s-destroy\\b|\\bkubectl\\s+delete\\s+(?:[^;&|\\n]*\\s)?(?:ns|namespaces?)\\b|\\bkubectl\\s+delete\\b[^;&|\\n]*\\s--all\\b|\\baws\\s+[\\w-]+\\s+(?:delete-db-instance|delete-db-cluster|terminate-instances|delete-bucket|delete-stack|delete-table|delete-cluster|delete-repository|delete-file-system|delete-hosted-zone|schedule-key-deletion)\\b|\\baws\\s+s3\\s+rb\\b|\\baws\\s+s3\\s+rm\\b[^;&|\\n]*--recursive\\b|\\bhelm\\s+(?:uninstall|delete)\\b|\\bdocker\\s+(?:system|volume)\\s+prune\\b|\\bdocker\\s+volume\\s+rm\\b|\\bgcloud\\s+[^;&|\\n]*\\sdelete\\b|\\baz\\s+group\\s+delete\\b"
+            }
+          }
+        },
+        {
+          "id": "approve-secret-reads",
+          "action": "require_approval",
+          "tool": "bash",
+          "params": {
+            "command": {
+              "$matches": "\\bkubectl\\s+get\\s+secrets?\\b|\\bkubectl\\s+config\\s+view\\b[^;&|\\n]*--raw\\b|\\baws\\s+secretsmanager\\s+get-secret-value\\b|\\baws\\s+ssm\\s+get-parameters?(?:-by-path)?\\b[^;&|\\n]*--with-decryption\\b"
+            }
+          }
+        },
+        {
+          "id": "approve-state-change",
+          "action": "require_approval",
+          "tool": "bash",
+          "params": {
+            "command": {
+              "$matches": "\\bkubectl\\s+(?:apply|create|patch|replace|rollout\\s+(?:restart|undo|pause|resume)|scale|autoscale|set|edit|label|annotate|cordon|uncordon|drain|taint|delete|exec|cp)\\b|\\bterraform\\s+(?:apply|import|taint|untaint|state\\s+(?:mv|rm|push))\\b|\\bhelm\\s+(?:install|upgrade|rollback)\\b|\\bdocker\\s+(?:restart|stop|start|kill|run|rm|rmi|exec|compose\\s+(?:up|down|restart|stop))\\b|\\baws\\s+[\\w-]+\\s+(?:create|update|put|modify|start|stop|reboot|run|attach|detach|associate|disassociate|invoke|tag|untag|deploy|register|deregister|set|enable|disable)-[\\w-]+|\\baws\\s+s3\\s+(?:cp|mv|rm|sync)\\b"
+            }
+          }
+        },
+        {
+          "id": "allow-discovery",
+          "action": "allow",
+          "tool": "bash",
+          "params": {
+            "command": {
+              "$matches": "^(?:kubectl\\s+(?:get|describe|logs|top|explain|version|api-resources|api-versions|cluster-info|auth\\s+can-i|rollout\\s+(?:status|history)|config\\s+(?:get-contexts|current-context))\\b|aws\\s+[\\w-]+\\s+(?:describe|list|get)-[\\w-]+|aws\\s+s3\\s+ls\\b|terraform\\s+(?:plan|validate|fmt|show|output|init|version|providers|state\\s+(?:list|show))\\b|docker\\s+(?:ps|images|logs|inspect|stats|version|info|compose\\s+(?:ps|logs|config))\\b|helm\\s+(?:list|ls|status|get|history|template|lint|show|search|version)\\b|(?:ls|pwd|cat|head|tail|wc|grep|rg|jq|which|echo)\\b)[^;&|`$()<>\\n\\r]*(?:\\|\\s*(?:grep|head|tail|wc|sort|uniq|jq|less|cat)\\b[^;&|`$()<>\\n\\r]*)*$"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Build a CrewAI Crew with the ArmorIQ SDK
+summary: A two agent CrewAI crew (a crypto researcher and a writer) wrapped with ArmorIQCrew, with an honest look at its proxy only limits compared with the other framework adapters.
+framework: crewai
+language: python
+tier: community
+products: [sdk, mcp-registration]
+use_case: research
+tags: [crewai, crypto, coingecko, multi-agent]
+demonstrates: [allow]
+authors: [Naveen-6087]
+tested_with:
+  "armoriq-sdk": "0.6.10"
+requires:
+  services: [armoriq, gemini, coingecko]

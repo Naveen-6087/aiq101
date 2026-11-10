@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Build a Google ADK Agent with the ArmorIQ SDK
+summary: An internal ops copilot on Google's Agent Development Kit that refunds a charge, holds a larger credit for human approval, and blocks a prompt injected data export.
+framework: google-adk
+language: typescript
+variant: ts
+tier: official
+products: [sdk, policies, approvals, mcp-registration]
+use_case: support-ops
+tags: [refunds, mcp, human-approval]
+demonstrates: [allow, hold, block, prompt-injection]
+authors: [Fuzailkazi]
+tested_with:
+  "@armoriq/sdk": "0.6.10"
+requires:
+  services: [armoriq, gemini]
+  external:
+    - name: armoriq-adk-ops-mcp
+      url: https://github.com/Fuzailkazi/armoriq-adk-ops-mcp

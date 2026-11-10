@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArmorIQ Cookbook</title>
+  <link rel="icon" href="armormark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Apply the saved or system theme before first paint.
+    (function () {
+      var saved = null;
+      try { saved = localStorage.getItem('aiq-cookbook-theme'); } catch (e) {}
+      var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="#" id="brand-home" aria-label="ArmorIQ Cookbook home">
+      <img src="armormark.svg" alt="" width="26" height="26" class="brand-mark">
+      <span class="brand-name">ArmorIQ Cookbook</span>
+    </a>
+    <div class="header-actions">
+      <button id="btn-checks" class="aq-button aq-button--ghost aq-button--sm check-button" type="button"><span id="check-status" role="status" aria-live="polite"></span></button>
+      <button id="btn-theme" class="aq-button aq-button--ghost aq-button--sm aq-button--icon" type="button"></button>
+    </div>
+  </header>
+  <div id="check-banner" class="check-banner" hidden></div>
+
+  <div class="shell">
+    <aside class="rail" aria-label="Recipes">
+      <div class="rail-top">
+        <label class="aq-search">
+          <span class="icon-slot" data-icon="search"></span>
+          <input id="search" type="search" placeholder="Search recipes" autocomplete="off" aria-label="Search recipes">
+        </label>
+        <div id="count" class="rail-count" aria-live="polite"></div>
+      </div>
+      <div id="rail-list" class="rail-list"></div>
+    </aside>
+
+    <main id="main" class="main" tabindex="-1">
+      <div id="view"></div>
+    </main>
+  </div>
+</body>
+</html>

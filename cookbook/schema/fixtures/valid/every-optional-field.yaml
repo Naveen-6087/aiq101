@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../recipe.schema.json
+# Uses every optional field once, including a deprecated status with its note.
+schema: 1
+title: Triage support tickets with LangGraph
+summary: A LangGraph agent that triages support tickets and escalates refunds for approval.
+framework: langgraph
+language: typescript
+variant: ts
+tier: community
+products: [sdk, approvals]
+use_case: support-ops
+tags: [tickets, triage]
+demonstrates: [allow, hold, delegation, audit-log]
+authors: [octocat, Some-User]
+tested_with:
+  "@armoriq/sdk": "0.7.0-beta.1"
+requires:
+  services: [armoriq, openai]
+  external:
+    - name: Sample ticket API
+      url: https://example.com/tickets
+secondary:
+  frameworks: [langchain]
+  languages: [python]
+siblings: [langgraph/python/support-triage]
+moved_from: [langchain/typescript/support-triage]
+status: deprecated
+deprecation_note: Superseded by the LangGraph Python recipe, which shows the same flow with delegation.

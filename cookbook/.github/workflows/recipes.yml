@@ -1,0 +1,79 @@
+# Checks recipes on every PR and on pushes to main (features 6, 7, and 8).
+# Runs on pull_request (never pull_request_target), with read only permissions and no secrets,
+# so fork PRs are safe: recipes are tested in offline mode, with no API keys.
+name: Recipes
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  metadata:
+    name: Metadata and index
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:schema
+      - run: npm run validate
+      - run: npm run index:check
+
+  changes:
+    name: Find changed recipes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      recipes: ${{ steps.changed.outputs.recipes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - id: changed
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}
+        run: |
+          if git rev-parse --verify --quiet "$BASE^{commit}" >/dev/null; then
+            echo "recipes=$(node tools/changed-recipes.mjs "$BASE")" >> "$GITHUB_OUTPUT"
+          else
+            echo "No usable base ($BASE), checking every recipe"
+            echo "recipes=$(node -e "import('./tools/recipes.mjs').then(m => console.log(JSON.stringify(m.recipeIds())))")" >> "$GITHUB_OUTPUT"
+          fi
+
+  recipe:
+    name: Build ${{ matrix.recipe }}
+    needs: changes
+    if: needs.changes.outputs.recipes != '[]' && needs.changes.outputs.recipes != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        recipe: ${{ fromJSON(needs.changes.outputs.recipes) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      # Passed through env, never pasted into the script, since a PR controls its folder names.
+      - env:
+          RECIPE: ${{ matrix.recipe }}
+        run: node tools/check-recipe.mjs --ci "$RECIPE"

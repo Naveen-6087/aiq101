@@ -1,0 +1,5 @@
+crewai[google-genai]==1.15.33
+armoriq-sdk[crewai]==0.8.18
+mcp==1.30.0
+python-dotenv==1.2.4
+PyYAML==6.0.3

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Build a Delegating CrewAI Crew with the ArmorIQ SDK
+summary: A two agent CrewAI incident crew where the lead hands its log analyst a narrower delegated token, so the analyst reads metrics and logs but is refused the restart the lead then makes.
+framework: crewai
+language: python
+tier: community
+products: [sdk, policies, mcp-registration]
+use_case: support-ops
+tags: [crewai, delegation, multi-agent, incident-response, mcp]
+demonstrates: [allow, delegation, block]
+authors: [Naveen-6087]
+tested_with:
+  "armoriq-sdk": "0.8.18"
+requires:
+  services: [armoriq, gemini]

@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/armoriq/cookbook/schema/recipe.schema.json",
+  "title": "ArmorIQ Cookbook recipe manifest (recipe.yaml)",
+  "description": "Describes one recipe. Spec: docs/specs/0002-recipe-metadata-manifest.md. Allowed values for framework, language, products, use_case, demonstrates, requires.services, and tested_with keys live in schema/taxonomy.yaml and are checked by the validator, not this schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "title",
+    "summary",
+    "framework",
+    "language",
+    "tier",
+    "products",
+    "use_case",
+    "authors"
+  ],
+  "properties": {
+    "schema": {
+      "description": "Manifest schema version. Always 1 for now; bumped only on a breaking change.",
+      "const": 1
+    },
+    "title": {
+      "description": "The recipe's title. Must equal the README's first '# ' heading.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[^\\r\\n]+$"
+    },
+    "summary": {
+      "description": "One sentence shown in the index table.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "pattern": "^[^\\r\\n]+$"
+    },
+    "framework": {
+      "description": "What runs the agent loop (spec 0001 runner test). A key of taxonomy.frameworks; must equal path segment 1.",
+      "$ref": "#/$defs/kebab"
+    },
+    "language": {
+      "description": "Language of the main entry point. A key of taxonomy.languages; must equal path segment 2.",
+      "$ref": "#/$defs/kebab"
+    },
+    "variant": {
+      "description": "TypeScript lane only: whether the code is plain JavaScript (js) or TypeScript (ts). Taken from the entry point's file extension.",
+      "enum": ["js", "ts"]
+    },
+    "tier": {
+      "description": "official (maintained by ArmorIQ and run live; also needs an entry in .github/official-recipes.txt) or community.",
+      "enum": ["official", "community"]
+    },
+    "products": {
+      "description": "ArmorIQ products the recipe uses. Keys of taxonomy.products.",
+      "type": "array",
+      "$ref": "#/$defs/kebabList",
+      "minItems": 1
+    },
+    "use_case": {
+      "description": "The one use case category the index groups this recipe under. A key of taxonomy.use_cases.",
+      "$ref": "#/$defs/kebab"
+    },
+    "tags": {
+      "description": "Free form search tags.",
+      "type": "array",
+      "maxItems": 10,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 30,
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+      }
+    },
+    "demonstrates": {
+      "description": "ArmorIQ outcomes the README's demo output shows. Keys of taxonomy.outcomes.",
+      "$ref": "#/$defs/kebabList"
+    },
+    "authors": {
+      "description": "GitHub handles of the people who wrote the recipe.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$"
+      }
+    },
+    "tested_with": {
+      "description": "Exact versions of ArmorIQ packages the recipe was tested with. Keys of taxonomy.packages; values must equal the lockfile's resolved versions. Quote the versions.",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^(@[a-z0-9][a-z0-9._-]*/)?[a-z0-9][a-z0-9._-]*$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$"
+      }
+    },
+    "requires": {
+      "description": "What a reader needs before running the recipe.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "services": {
+          "description": "External accounts whose credentials appear in .env.example. Keys of taxonomy.services.",
+          "$ref": "#/$defs/kebabList"
+        },
+        "external": {
+          "description": "Anything the reader must clone, deploy, or sign up for that is not a taxonomy service.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "url"],
+            "properties": {
+              "name": {
+                "description": "Display name.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60,
+                "pattern": "^[^\\r\\n]+$"
+              },
+              "url": {
+                "description": "An https:// link.",
+                "type": "string",
+                "maxLength": 300,
+                "pattern": "^https://[^\\s]+$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "secondary": {
+      "description": "Other frameworks or languages the recipe uses besides the primary ones.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "frameworks": {
+          "description": "Keys of taxonomy.frameworks, never equal to framework.",
+          "$ref": "#/$defs/kebabList"
+        },
+        "languages": {
+          "description": "Keys of taxonomy.languages, never equal to language.",
+          "$ref": "#/$defs/kebabList"
+        }
+      }
+    },
+    "siblings": {
+      "description": "Recipe IDs of the same recipe for other hosts or languages. Each must exist.",
+      "$ref": "#/$defs/recipeIdList"
+    },
+    "moved_from": {
+      "description": "Recipe IDs this recipe used to live at.",
+      "$ref": "#/$defs/recipeIdList"
+    },
+    "status": {
+      "description": "active (default) or deprecated. deprecated needs a deprecation_note.",
+      "enum": ["active", "deprecated"]
+    },
+    "deprecation_note": {
+      "description": "Why the recipe is deprecated and what to use instead. Only with status: deprecated.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "pattern": "^[^\\r\\n]+$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["language"],
+        "properties": { "language": { "const": "typescript" } }
+      },
+      "then": { "required": ["variant"] },
+      "else": { "properties": { "variant": false } }
+    },
+    {
+      "if": {
+        "required": ["language", "products"],
+        "properties": {
+          "language": { "enum": ["python", "typescript"] },
+          "products": { "type": "array", "contains": { "const": "sdk" } }
+        }
+      },
+      "then": { "required": ["tested_with"] }
+    },
+    {
+      "if": {
+        "required": ["status"],
+        "properties": { "status": { "const": "deprecated" } }
+      },
+      "then": { "required": ["deprecation_note"] },
+      "else": { "properties": { "deprecation_note": false } }
+    }
+  ],
+  "$defs": {
+    "kebab": {
+      "type": "string",
+      "maxLength": 40,
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "kebabList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/kebab" }
+    },
+    "recipeIdList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(?=[^/]{1,40}/[^/]{1,40}/[^/]{1,40}$)[a-z0-9]+(-[a-z0-9]+)*/[a-z0-9]+(-[a-z0-9]+)*/[a-z0-9]+(-[a-z0-9]+)*$"
+      }
+    }
+  }
+}

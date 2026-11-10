@@ -1,0 +1,22 @@
+{
+  "name": "ops-copilot-agent",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "ask": "tsx src/index.ts",
+    "check": "tsx src/check-setup.ts",
+    "demo:offline": "node --import tsx --import ./offline/register.mjs src/index.ts",
+    "test:offline": "node offline/test.mjs"
+  },
+  "dependencies": {
+    "@armoriq/sdk": "^0.6.10",
+    "@google/adk": "^2.3.0",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "dotenv": "^18.0.8",
+    "tsx": "^4.23.15"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
+  }
+}

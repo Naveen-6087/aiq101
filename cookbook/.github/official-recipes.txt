@@ -1,0 +1,5 @@
+# Official tier allowlist (spec 0002). One recipe ID per line, sorted.
+# A recipe is official only when its recipe.yaml says tier: official AND its ID is listed here.
+# The live end to end job reads only this file, and only on main. Maintainers own it via CODEOWNERS.
+google-adk/typescript/ops-copilot
+sdk/typescript/github-agent

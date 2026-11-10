@@ -1,0 +1,221 @@
+{
+  "schemaVersion": "armor.policy.v1",
+  "kind": "PolicyProfile",
+  "metadata": {
+    "name": "armorops",
+    "description": "ArmorOps: cloud and infra copilot. Read-only discovery runs freely, state changes and secret reads are held, irreversible deletes are blocked."
+  },
+  "defaults": {
+    "decision": "allow",
+    "conflictResolution": "deny_overrides"
+  },
+  "statements": [
+    {
+      "id": "forbid-cloud-credential-files",
+      "effect": "forbid",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Read",
+          "Write",
+          "Edit",
+          "MultiEdit",
+          "Grep",
+          "Glob"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "file.path",
+          "op": "matches",
+          "value": "(?:^|[\\\\/\\s\"'=:])\\.aws[\\\\/](?:credentials|config)(?:$|[\\s\"'`;|&)<>])|\\.kube[\\\\/]config(?:$|[\\s\"'`;|&)<>])|\\.terraform\\.d[\\\\/]credentials\\.tfrc\\.json|\\.config[\\\\/]gcloud(?:$|[\\\\/\\s\"'`;|&)<>])|(?:^|[\\\\/\\s\"'=:])\\.azure(?:$|[\\\\/\\s\"'`;|&)<>])|\\.tfstate(?:\\.backup)?(?:$|[\\s\"'`;|&)<>])"
+        }
+      ]
+    },
+    {
+      "id": "forbid-cloud-credential-shell",
+      "effect": "forbid",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "(?:^|[\\\\/\\s\"'=:])\\.aws[\\\\/](?:credentials|config)(?:$|[\\s\"'`;|&)<>])|\\.kube[\\\\/]config(?:$|[\\s\"'`;|&)<>])|\\.terraform\\.d[\\\\/]credentials\\.tfrc\\.json|\\.config[\\\\/]gcloud(?:$|[\\\\/\\s\"'`;|&)<>])|(?:^|[\\\\/\\s\"'=:])\\.azure(?:$|[\\\\/\\s\"'`;|&)<>])|\\.tfstate(?:\\.backup)?(?:$|[\\s\"'`;|&)<>])"
+        }
+      ]
+    },
+    {
+      "id": "forbid-irreversible",
+      "effect": "forbid",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "\\bterraform\\s+(?:[^;&|\\n]*\\s)?destroy\\b|\\bterraform\\s+apply\\b[^;&|\\n]*\\s-destroy\\b|\\bkubectl\\s+delete\\s+(?:[^;&|\\n]*\\s)?(?:ns|namespaces?)\\b|\\bkubectl\\s+delete\\b[^;&|\\n]*\\s--all\\b|\\baws\\s+[\\w-]+\\s+(?:delete-db-instance|delete-db-cluster|terminate-instances|delete-bucket|delete-stack|delete-table|delete-cluster|delete-repository|delete-file-system|delete-hosted-zone|schedule-key-deletion)\\b|\\baws\\s+s3\\s+rb\\b|\\baws\\s+s3\\s+rm\\b[^;&|\\n]*--recursive\\b|\\bhelm\\s+(?:uninstall|delete)\\b|\\bdocker\\s+(?:system|volume)\\s+prune\\b|\\bdocker\\s+volume\\s+rm\\b|\\bgcloud\\s+[^;&|\\n]*\\sdelete\\b|\\baz\\s+group\\s+delete\\b"
+        }
+      ]
+    },
+    {
+      "id": "hold-secret-reads",
+      "effect": "require_approval",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "\\bkubectl\\s+get\\s+secrets?\\b|\\bkubectl\\s+config\\s+view\\b[^;&|\\n]*--raw\\b|\\baws\\s+secretsmanager\\s+get-secret-value\\b|\\baws\\s+ssm\\s+get-parameters?(?:-by-path)?\\b[^;&|\\n]*--with-decryption\\b"
+        }
+      ]
+    },
+    {
+      "id": "hold-state-change",
+      "effect": "require_approval",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "\\bkubectl\\s+(?:apply|create|patch|replace|rollout\\s+(?:restart|undo|pause|resume)|scale|autoscale|set|edit|label|annotate|cordon|uncordon|drain|taint|delete|exec|cp)\\b|\\bterraform\\s+(?:apply|import|taint|untaint|state\\s+(?:mv|rm|push))\\b|\\bhelm\\s+(?:install|upgrade|rollback)\\b|\\bdocker\\s+(?:restart|stop|start|kill|run|rm|rmi|exec|compose\\s+(?:up|down|restart|stop))\\b|\\baws\\s+[\\w-]+\\s+(?:create|update|put|modify|start|stop|reboot|run|attach|detach|associate|disassociate|invoke|tag|untag|deploy|register|deregister|set|enable|disable)-[\\w-]+|\\baws\\s+s3\\s+(?:cp|mv|rm|sync)\\b"
+        }
+      ]
+    },
+    {
+      "id": "hold-unlisted-shell",
+      "effect": "require_approval",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "not_matches",
+          "value": "^(?:kubectl\\s+(?:get|describe|logs|top|explain|version|api-resources|api-versions|cluster-info|auth\\s+can-i|rollout\\s+(?:status|history)|config\\s+(?:get-contexts|current-context))\\b|aws\\s+[\\w-]+\\s+(?:describe|list|get)-[\\w-]+|aws\\s+s3\\s+ls\\b|terraform\\s+(?:plan|validate|fmt|show|output|init|version|providers|state\\s+(?:list|show))\\b|docker\\s+(?:ps|images|logs|inspect|stats|version|info|compose\\s+(?:ps|logs|config))\\b|helm\\s+(?:list|ls|status|get|history|template|lint|show|search|version)\\b|(?:ls|pwd|cat|head|tail|wc|grep|rg|jq|which|echo)\\b)[^;&|`$()<>\\n\\r]*(?:\\|\\s*(?:grep|head|tail|wc|sort|uniq|jq|less|cat)\\b[^;&|`$()<>\\n\\r]*)*$"
+        }
+      ]
+    },
+    {
+      "id": "allow-discovery",
+      "effect": "permit",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "^(?:kubectl\\s+(?:get|describe|logs|top|explain|version|api-resources|api-versions|cluster-info|auth\\s+can-i|rollout\\s+(?:status|history)|config\\s+(?:get-contexts|current-context))\\b|aws\\s+[\\w-]+\\s+(?:describe|list|get)-[\\w-]+|aws\\s+s3\\s+ls\\b|terraform\\s+(?:plan|validate|fmt|show|output|init|version|providers|state\\s+(?:list|show))\\b|docker\\s+(?:ps|images|logs|inspect|stats|version|info|compose\\s+(?:ps|logs|config))\\b|helm\\s+(?:list|ls|status|get|history|template|lint|show|search|version)\\b|(?:ls|pwd|cat|head|tail|wc|grep|rg|jq|which|echo)\\b)[^;&|`$()<>\\n\\r]*(?:\\|\\s*(?:grep|head|tail|wc|sort|uniq|jq|less|cat)\\b[^;&|`$()<>\\n\\r]*)*$"
+        }
+      ]
+    },
+    {
+      "id": "allow-read-tools",
+      "effect": "permit",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Read",
+          "Grep",
+          "Glob"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": []
+    }
+  ]
+}

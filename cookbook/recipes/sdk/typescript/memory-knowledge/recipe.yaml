@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Build a Memory Knowledge Agent with the ArmorIQ SDK
+summary: A knowledge graph assistant on the memory MCP server where reads are allowed, new facts are held, and memory wipes are blocked.
+framework: sdk
+language: typescript
+variant: js
+tier: community
+products: [sdk, policies, approvals, mcp-registration]
+use_case: data-access
+tags: [memory, mcp, knowledge-graph]
+demonstrates: [allow, hold, block]
+authors: [Naveen-6087]
+tested_with:
+  "@armoriq/sdk": "0.6.10"
+requires:
+  services: [armoriq, gemini]

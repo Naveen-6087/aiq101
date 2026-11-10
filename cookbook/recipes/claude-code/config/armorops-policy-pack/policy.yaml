@@ -1,0 +1,67 @@
+# ArmorOps policy pack, summary.
+#
+# This file is a readable summary for the recipe browser's Policy tab. Neither plugin reads
+# it. The files the plugins load are:
+#   armorclaude/armorops.json          ArmorClaude armor.policy.v1 PolicyProfile
+#   armorcodex/policy-profiles.json    ArmorCodex saved profile "armorops"
+# offline/test.mjs fails if this summary and armorclaude/armorops.json drift apart.
+#
+# ArmorClaude evaluates every statement and the strictest match wins
+# (block over hold over allow); anything unmatched falls to default_action.
+# `codex:` names the matching ArmorCodex rule, or none.
+name: armorops
+version: v1
+scope:
+  target_type: coding-agent
+  target: claude-code
+  caller: all
+default_action: allow
+rules:
+  # Cloud credentials and Terraform state never reach the model.
+  - id: forbid-cloud-credential-files
+    tool: Read, Write, Edit, MultiEdit, Grep, Glob
+    action: block
+    when: ~/.aws/credentials or config, ~/.kube/config, ~/.terraform.d credentials, ~/.config/gcloud, ~/.azure, *.tfstate
+    codex: deny-cloud-credentials
+  - id: forbid-cloud-credential-shell
+    tool: Bash, PowerShell
+    action: block
+    when: the command text mentions one of those paths
+    codex: deny-cloud-credentials
+
+  # Irreversible changes are blocked outright.
+  - id: forbid-irreversible
+    tool: Bash, PowerShell
+    action: block
+    when: terraform destroy / apply -destroy, kubectl delete namespace, kubectl delete --all, aws delete-db-instance / delete-db-cluster / terminate-instances / delete-bucket / delete-stack / delete-table, aws s3 rb, aws s3 rm --recursive, helm uninstall, docker system or volume prune, gcloud ... delete, az group delete
+    codex: deny-irreversible
+
+  # Reading a secret's value is held even though it is a read.
+  - id: hold-secret-reads
+    tool: Bash, PowerShell
+    action: hold
+    when: kubectl get secret, kubectl config view --raw, aws secretsmanager get-secret-value, aws ssm get-parameter --with-decryption
+    codex: approve-secret-reads
+
+  # State changes wait for a human.
+  - id: hold-state-change
+    tool: Bash, PowerShell
+    action: hold
+    when: kubectl apply / create / patch / rollout restart / scale / delete / exec, terraform apply / import / state mv, helm install / upgrade / rollback, docker restart / stop / run / rm, aws create- / update- / put- / modify- / start- / stop- / run-, aws s3 cp / mv / rm / sync
+    codex: approve-state-change
+
+  # Everything else in the shell asks first, unless it is known read only discovery.
+  - id: hold-unlisted-shell
+    tool: Bash, PowerShell
+    action: hold
+    when: the command is not on the discovery list below
+    codex: none
+  - id: allow-discovery
+    tool: Bash, PowerShell
+    action: allow
+    when: one kubectl get / describe / logs / top, aws <service> describe- / list- / get-, aws s3 ls, terraform plan / validate / show / output / init, docker ps / logs / inspect, helm list / status / get / history, with no ; && || > or $( ), optionally piped into grep, head, tail, wc, jq
+    codex: allow-discovery
+  - id: allow-read-tools
+    tool: Read, Grep, Glob
+    action: allow
+    codex: none

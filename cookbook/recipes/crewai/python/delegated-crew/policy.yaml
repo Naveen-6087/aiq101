@@ -1,0 +1,25 @@
+# ArmorIQ Policy Profile for the incident-ops MCP Server
+# Author this in Platform -> Policies -> Policy Studio -> Single Policy
+# (Target Type: mcp_server, Target ID: your registered incident-ops server's
+# id) and paste these rules into the YAML editor there. The offline stand-in
+# in offline/ reads this same file.
+#
+# Note what is NOT here: nothing in this policy stops the log analyst from
+# restarting a service. The policy allows restart_service for this user. The
+# analyst is refused because the token it was handed (client.delegate with
+# allowed_actions) is narrower than its parent's, not because of a rule.
+name: incident-ops-policy
+version: v0.1.0
+scope:
+  target_type: mcp
+  target: incident-ops   # replace with the registered incident-ops MCP server id
+  caller: all
+default_action: block
+priority: 50
+rules:
+  - tool: get_metrics
+    action: allow
+  - tool: search_logs
+    action: allow
+  - tool: restart_service
+    action: allow

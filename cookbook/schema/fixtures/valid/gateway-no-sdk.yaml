@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../recipe.schema.json
+# A recipe that installs no ArmorIQ package (Intent Gateway is a base URL change), so tested_with is optional.
+schema: 1
+title: Govern an Agent with Intent Gateway
+summary: An agent whose only ArmorIQ change is its model base URL.
+framework: openai-agents
+language: python
+tier: community
+products: [intent-gateway, policies]
+use_case: finance
+authors: [octocat]

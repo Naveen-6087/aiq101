@@ -1,0 +1,22 @@
+{
+  "name": "armoriq-gateway-support-bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A support bot on the Vercel AI SDK where Intent Gateway allows lookups, holds credits, and blocks account deletion",
+  "main": "agent.mjs",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node agent.mjs",
+    "demo": "node demo.mjs",
+    "demo:offline": "node --import ./offline/register.mjs demo.mjs",
+    "test:offline": "node offline/test.mjs"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "4.0.99",
+    "ai": "7.0.166",
+    "zod": "4.6.7"
+  }
+}

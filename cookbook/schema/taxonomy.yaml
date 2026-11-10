@@ -1,0 +1,185 @@
+# Allowed values for recipe.yaml (spec 0002).
+# Each list is a map keyed by the value itself. Add a value in the same PR that first uses it.
+
+frameworks:
+  # kind: runner (owns the agent loop) | none (no framework) | host (coding agent a plugin runs in) | platform (config only, on ArmorIQ itself)
+  sdk:
+    label: ArmorIQ SDK (no framework)
+    kind: none
+    note: The ArmorIQ SDK in a hand written loop. Model provider clients and MCP clients do not count as a framework.
+  armoriq:
+    label: ArmorIQ platform
+    kind: platform
+    note: Config only recipes with no host agent, such as registering an MCP server or a policy pack.
+  claude-code:
+    label: Claude Code
+    kind: host
+    note: The coding agent ArmorClaude runs in. Not the Claude Agent SDK.
+  codex:
+    label: Codex
+    kind: host
+    note: The coding agent ArmorCodex runs in.
+  google-adk:
+    label: Google ADK
+    kind: runner
+    note: Google's Agent Development Kit. Using the Gemini client alone is not ADK.
+  langchain:
+    label: LangChain
+    kind: runner
+  langgraph:
+    label: LangGraph
+    kind: runner
+    note: Its own framework, separate from langchain, even when both are installed.
+  crewai:
+    label: CrewAI
+    kind: runner
+  openai-agents:
+    label: OpenAI Agents SDK
+    kind: runner
+    note: The OpenAI Agents SDK. Using the OpenAI client alone is sdk.
+  claude-agent-sdk:
+    label: Claude Agent SDK
+    kind: runner
+    note: Anthropic's agent SDK. Not the claude-code plugin host, and using the Anthropic client alone is sdk.
+  vercel-ai-sdk:
+    label: Vercel AI SDK
+    kind: runner
+    note: Only when its agent loop runs the tools. Using it just to call a model is sdk.
+  ag2:
+    label: AG2 / AutoGen
+    kind: runner
+    note: Covers both AutoGen and AG2.
+  pydantic-ai:
+    label: Pydantic AI
+    kind: runner
+  mastra:
+    label: Mastra
+    kind: runner
+  llamaindex:
+    label: LlamaIndex
+    kind: runner
+  strands:
+    label: Strands Agents
+    kind: runner
+
+languages:
+  # lane: python | typescript | config | other
+  python:
+    label: Python
+    lane: python
+    aliases: [py]
+  typescript:
+    label: TypeScript / JavaScript
+    lane: typescript
+    aliases: [javascript, js, ts, node]
+  config:
+    label: Config only
+    lane: config
+    aliases: []
+  go:
+    label: Go
+    lane: other
+    aliases: [golang]
+  java:
+    label: Java
+    lane: other
+    aliases: []
+  rust:
+    label: Rust
+    lane: other
+    aliases: [rs]
+  csharp:
+    label: C#
+    lane: other
+    aliases: [c#, cs, dotnet]
+  cpp:
+    label: C++
+    lane: other
+    aliases: [c++, cxx]
+
+products:
+  sdk:
+    label: ArmorIQ SDK
+  policies:
+    label: Policies
+  approvals:
+    label: Approvals
+  mcp-registration:
+    label: MCP registration
+  armorclaw:
+    label: ArmorClaw
+  armorclaude:
+    label: ArmorClaude
+  armorcodex:
+    label: ArmorCodex
+  intent-gateway:
+    label: Intent Gateway
+
+use_cases:
+  devtools:
+    label: Developer tools
+    description: Agents that work on code, repositories, or developer workflows.
+  support-ops:
+    label: Support and ops
+    description: Agents that handle tickets, customer accounts, and internal operations.
+  finance:
+    label: Finance
+    description: Agents that move money, issue refunds, or touch billing.
+  data-access:
+    label: Data access
+    description: Agents that query, export, or summarize internal data.
+  coding-agent:
+    label: Coding agents
+    description: Guardrails for coding agents such as Claude Code or Codex.
+  security-ops:
+    label: Security ops
+    description: Agents that triage alerts, investigate incidents, or manage access.
+  research:
+    label: Research
+    description: Agents that search, read, and synthesize information.
+  productivity:
+    label: Productivity
+    description: Agents that work across email, calendars, documents, and chat.
+
+outcomes:
+  allow:
+    label: Allowed call
+  hold:
+    label: Held for approval
+  block:
+    label: Blocked call
+  delegation:
+    label: Delegation
+  prompt-injection:
+    label: Prompt injection blocked
+  audit-log:
+    label: Audit log
+  multi-server:
+    label: One plan, several MCP servers
+  monitor-mode:
+    label: Monitor mode (would block, nothing stopped)
+
+services:
+  armoriq:
+    label: ArmorIQ
+  gemini:
+    label: Google Gemini
+  openai:
+    label: OpenAI
+  anthropic:
+    label: Anthropic
+  github:
+    label: GitHub
+  coingecko:
+    label: CoinGecko
+
+packages:
+  # ArmorIQ packages only.
+  "@armoriq/sdk":
+    label: ArmorIQ SDK (TypeScript)
+    ecosystem: npm
+    language: typescript
+  "armoriq-sdk":
+    label: ArmorIQ SDK (Python)
+    ecosystem: pypi
+    language: python

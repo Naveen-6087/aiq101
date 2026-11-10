@@ -1,0 +1,20 @@
+{
+  "name": "armoriq-crypto-prices-agent",
+  "version": "1.0.0",
+  "description": "A crypto prices agent backed by a self built CoinGecko MCP server, governed by ArmorIQ and planned by Gemini",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "demo": "node demo.js",
+    "demo:offline": "node --import ./offline/register.mjs demo.js \"how's Solana doing today, in EUR?\"",
+    "test:offline": "node offline/test.mjs"
+  },
+  "dependencies": {
+    "@armoriq/sdk": "0.6.10",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "zod": "^3.24.1"
+  }
+}

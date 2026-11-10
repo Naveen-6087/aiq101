@@ -1,0 +1,29 @@
+# ArmorIQ Policy Profile for the on-call runbook tools
+# Author this in Platform -> Policies -> Policy Studio -> Single Policy
+# (Target Type: mcp_server, Target ID: the id of the server you registered as
+# oncall-runbook) - paste these rules into the YAML editor there. The offline
+# stand-in reads this same file, so editing a rule here changes the offline
+# result too.
+name: oncall-runbook-policy
+version: v0.1.0
+scope:
+  target_type: mcp
+  target: oncall-runbook   # replace with the registered server id
+  caller: all
+default_action: block
+priority: 50
+rules:
+  # Read only investigation -> ALLOW
+  - tool: get_service_status
+    action: allow
+  - tool: read_recent_logs
+    action: allow
+
+  # Changes production -> HOLD (the graph interrupts until a human decides)
+  - tool: restart_service
+    action: hold
+
+  # Destroys data -> BLOCK. default_action already blocks it; listed so the
+  # intent is auditable and survives a looser default_action.
+  - tool: delete_volume
+    action: block

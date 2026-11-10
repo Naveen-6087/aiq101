@@ -1,0 +1,367 @@
+/* Copied verbatim from /Users/fu2ail/armor/design/design-system/styles/tokens.css. Re-copy when the design system changes. */
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Design tokens — ArmorIQ v2 (V5 "Compact SaaS" palette)
+ *
+ * SINGLE source of truth for every design decision: colour, spacing, radius,
+ * type, tracking, shadow. Values are mirrored into Tailwind via the @theme
+ * block in globals.css.
+ *
+ * Naming grammar:
+ *   aq-<family>[-<variant>]   e.g. aq-ink, aq-ink-soft, aq-accent-strong
+ *
+ *   Variant scale (consistent across families):
+ *     (none)    = default tone
+ *     -soft     = lighter / less emphatic variant of default
+ *     -muted    = lightest variant (helper text, captions)
+ *     -strong   = deeper / more emphatic variant
+ *     -tint     = surface-level wash (NOT text)
+ *
+ * Source of truth for visuals: docs/design-source/v5-compact.jsx.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ───────────────────────── COLOUR ───────────────────────── */
+
+  /* Surfaces */
+  --color-aq-bg: #fbfbfb;
+  --color-aq-surface: #ffffff;
+  --color-aq-zebra: #f8f7f4;
+
+  /* Borders */
+  --color-aq-border: #ebeae6;
+  --color-aq-border-strong: #d6d4cd;
+
+  /* Ink — text on light surfaces */
+  --color-aq-ink: #1b1a17; /* primary: headings, emphasised body */
+  --color-aq-ink-soft: #46443f; /* secondary: body, labels */
+  --color-aq-ink-muted: #80807a; /* tertiary: helper, captions */
+  --color-aq-ink-faint: #a4a39c; /* faintest: placeholder text, decorative chrome icons (search glyph, breadcrumb hexagon, rail collapse toggle) */
+
+  /* Brand accent — Supabase grammar:
+       - `accent` is the brand orange, reserved for primary CTAs, focus
+         rings, status dots, and the brand glyph. It stays orange in both
+         themes so the call-to-action read is unmistakable.
+       - `accent-soft` is the SELECTION wash. Neutral light grey in light
+         mode, dark raised grey in dark mode. Selected nav pills, accent
+         chip backgrounds, and tertiary hover surfaces all use this.
+       - `accent-strong` is the SELECTED TEXT colour. Dark slate in light
+         mode, near-white in dark mode. Reads as emphasised foreground
+         on top of the accent-soft wash without competing with the brand
+         orange.
+     The mismatch between "accent" (still orange) and "accent-soft/strong"
+     (now neutral) is intentional: it lets us keep the brand colour as a
+     punctuation mark while making selections read as subdued surfaces.
+     Same pattern is mirrored in the dark-mode block below. */
+  --color-aq-accent: #e85a19;
+  --color-aq-accent-soft: #f4f4f5;
+  --color-aq-accent-strong: #27272a;
+
+  /* Accent TINT family — the orange selection grammar from the V21 chrome
+     design (sidebar/header/graph). Distinct from `accent-soft/strong` (which
+     are the neutral-grey selection tokens): these three carry the brand-orange
+     selection read the design uses for active rail buttons, active nav rows,
+     the active plan badge, and the current-org row.
+       - `accent-wash`  : orange surface wash behind an active row/button.
+       - `accent-deep`  : deep orange text on top of the wash.
+       - `accent-line`  : accent-tinted hairline (active plan badge border). */
+  --color-aq-accent-wash: #fdf1e9;
+  --color-aq-accent-deep: #a53d0e;
+  --color-aq-accent-line: #f3d2be;
+
+  /* Org-tile palette extension — purple tile for org avatars (joins the
+     existing info-blue / good-green org-tile colors). */
+  --color-aq-iris: #7c3aed;
+
+  /* AI authoring accent — the only gradient in the system, reserved for AI affordances. */
+  --color-aq-ai-from: #7c5cff; /* violet */
+  --color-aq-ai-to: #ff7a3d; /* warm orange, kin to the brand accent */
+
+  /* AI policy composer — the morphing composer card (Figma 550:100). These are
+   * the card's own surfaces: a neutral grey input/body well that is cooler than
+   * aq-zebra, a near-black send chip, and the two inline-mention hues (MCP
+   * magenta, tool violet) from the wireframe. Scoped to the composer; not part
+   * of the general palette. */
+  --color-aq-compose-well: #f2f2f2; /* input + body field background */
+  --color-aq-compose-send: #3d3d3d; /* circular send chip */
+  --color-aq-compose-ink: #2c2c2c; /* body prompt text */
+  --color-aq-compose-mention-mcp: #d45ad8; /* @MCP mentions (magenta) */
+  --color-aq-compose-mention-tool: #7f54e3; /* @tool mentions (violet) */
+
+  /* Semantic — status */
+  --color-aq-good: #2e7d32;
+  --color-aq-good-soft: #e8f4e8;
+  --color-aq-warn: #a26a05;
+  --color-aq-warn-soft: #fcf6e2;
+  --color-aq-bad: #b91c1c;
+  --color-aq-bad-soft: #fce8e6;
+  /* Informational - used for View-only states (RBAC matrix, neutral-but-active indicators) */
+  --color-aq-info: #1e40af; /* "View only" level chip in RBAC matrix */
+  --color-aq-info-soft: #eaf1fd; /* background tint for view level */
+
+  /* Dark ink panel (SignInB right pane, wizard cert card) */
+  --color-aq-ink-panel: #0e0e10;
+  --color-aq-ink-on: #fbfbfb; /* primary text on dark */
+  --color-aq-ink-on-soft: #c9c6bf; /* secondary text on dark */
+  --color-aq-ink-on-muted: #9f9c95; /* tertiary text on dark */
+  --color-aq-ink-on-tint: #e8e5dd; /* light hairline / divider on dark */
+  --color-aq-ink-on-line: rgb(255 255 255 / 0.1); /* alpha border on dark */
+  --color-aq-ink-on-wash: rgb(255 255 255 / 0.04); /* alpha bg tint on dark */
+
+  /* Overlay scrim (Modal + SideModal backdrop). Has to work in BOTH themes:
+     in light mode this darkens a bright page; in dark mode the page is
+     already dark, so the scrim needs higher opacity. Defined as a single
+     bg+alpha token with a dark override below so callers stay theme-agnostic. */
+  --color-aq-scrim: rgb(14 14 16 / 0.4);
+
+  /* Toast / floating-chip surface. In light mode this is the dark ink panel
+     for high contrast against the white page. In dark mode it needs to be
+     a RAISED dark surface (lighter than the page) so it doesn't disappear. */
+  --color-aq-toast-bg: #0e0e10;
+  --color-aq-toast-fg: #fbfbfb;
+  --color-aq-toast-border: rgb(255 255 255 / 0.1);
+
+  /* Third-party brand (SSO buttons, etc.) */
+  --color-aq-brand-microsoft: #0078d4;
+  --color-aq-brand-google: #34a853;
+  /* Google's full 4-color "G" logo palette. Used by the auth Google button.
+     -google (green) is the existing token; the three below complete the set. */
+  --color-aq-brand-google-blue: #4285f4;
+  --color-aq-brand-google-yellow: #fbbc05;
+  --color-aq-brand-google-red: #ea4335;
+
+  /* ───────────────────────── GRAPH PALETTE ───────────────────────── */
+  /* The AIQ Graph encodes node TYPE by hue and edge RELATIONSHIP by colour —
+     these are semantic data channels, not decoration, so they earn tokens.
+     One anchor per node type (oklch L 0.57 / C 0.18, hue varies); the ring /
+     soft-fill / glyph variants are derived at render time via oklch lightness
+     so we keep a flat, readable token set rather than 60 one-offs. */
+  --color-aq-node-org: oklch(0.57 0.18 250);
+  --color-aq-node-framework: oklch(0.57 0.18 282);
+  --color-aq-node-agent: oklch(0.57 0.18 34);
+  --color-aq-node-server: oklch(0.57 0.18 200);
+  --color-aq-node-policy: oklch(0.57 0.18 232);
+  --color-aq-node-plan: oklch(0.57 0.18 168);
+  --color-aq-node-tool: oklch(0.57 0.18 304);
+  --color-aq-node-key: oklch(0.57 0.18 72);
+  --color-aq-node-bundle: oklch(0.57 0.18 244);
+  --color-aq-node-invocation: oklch(0.57 0.18 146);
+  --color-aq-node-governed: oklch(0.66 0.15 70); /* governance crown gold */
+
+  /* Coloured relationship edges (neutral edges reuse aq-border family). */
+  --color-aq-edge-flow: oklch(0.68 0.11 168); /* invokes / plans */
+  --color-aq-edge-auth: oklch(0.72 0.12 72); /* authenticates */
+  --color-aq-edge-govern: oklch(0.64 0.13 232); /* governs */
+  --color-aq-edge-secure: oklch(0.62 0.13 282); /* secures */
+  --color-aq-edge-hot: oklch(0.6 0.19 35); /* selected / blast-radius edge + halo */
+
+  /* ───────────────────────── RADIUS ───────────────────────── */
+  /* Tailwind defaults cover 4 / 6 / 8 / 12 px. We add the 3 px chip plus two
+     large floating-panel radii used by the chrome dropdowns and the graph
+     detail panel (14 / 16 px sit above Tailwind's 12 px `xl`). */
+
+  --radius-aq-xs: 3px;
+  --radius-aq-2xl: 14px; /* org-switcher / layout dropdown panels */
+  --radius-aq-3xl: 16px; /* graph detail panel */
+
+  /* ───────────────────────── TYPOGRAPHY ───────────────────────── */
+  /* V5 type scale. Pair size + line-height so leading is locked.
+   * Scaled ~1.075 (≈107%, "+1px" on the workhorse sizes) from the original
+   * V5 scale (10/11.5/12.5/13/14/22/28/40) so the UI reads a touch larger and
+   * more comfortable without changing layout density or any canvas geometry. */
+
+  --text-aq-caption: 11px;
+  --text-aq-caption--line-height: 15px;
+
+  --text-aq-xs: 12.5px;
+  --text-aq-xs--line-height: 17px;
+
+  --text-aq-sm: 13.5px;
+  --text-aq-sm--line-height: 19px;
+
+  --text-aq-base: 14px;
+  --text-aq-base--line-height: 21px;
+
+  --text-aq-md: 15px;
+  --text-aq-md--line-height: 22px;
+
+  /* Lg — fills the gap between md (15px) and h2 (24px). Used by the AI policy
+   * composer's body prompt + idle input, where the Figma calls for 16/17px. */
+  --text-aq-lg: 16px;
+  --text-aq-lg--line-height: 24px;
+
+  --text-aq-h2: 24px;
+  --text-aq-h2--line-height: 30px;
+
+  --text-aq-display: 30px;
+  --text-aq-display--line-height: 34px;
+
+  /* Hero — used by the dashboard's lead KPI tile. One step above display. */
+  --text-aq-hero: 43px;
+  --text-aq-hero--line-height: 47px;
+
+  /* Stat — fills the 15→24 gap for large mono readouts (graph blast-radius
+     numbers, empty-state headings). */
+  --text-aq-stat: 20px;
+  --text-aq-stat--line-height: 24px;
+
+  /* Tracking (letter-spacing) */
+  --tracking-aq-tight: -0.02em;
+  --tracking-aq-wide: 0.04em;
+  --tracking-aq-wider: 0.06em;
+  --tracking-aq-widest: 0.12em;
+
+  /* ───────────────────────── SPACING ───────────────────────── */
+  /* Adds half-step rungs (18 / 22 / 26 / 30 px) to Tailwind's 4 px scale.
+     Each generates p-4.5 / m-4.5 / gap-4.5 / h-4.5 / w-4.5 / inset-4.5 etc.  */
+
+  --spacing-4_5: 1.125rem; /* 18px */
+  --spacing-5_5: 1.375rem; /* 22px */
+  --spacing-6_5: 1.625rem; /* 26px */
+  --spacing-7_5: 1.875rem; /* 30px */
+
+  /* ───────────────────────── SHADOW ───────────────────────── */
+
+  --shadow-aq-card: 0 1px 2px rgb(27 26 23 / 0.04);
+  --shadow-aq-popover: 0 4px 12px rgb(27 26 23 / 0.08);
+  --shadow-aq-modal: 0 16px 48px rgb(27 26 23 / 0.16);
+
+  /* Accent-tinted button shadow — the loud primary action (orange CTA). */
+  --shadow-aq-button: 0 1px 2px rgb(232 90 25 / 0.25);
+  /* Deep floating-menu shadow — org-switcher dropdown + compact hover flyout. */
+  --shadow-aq-flyout: 0 12px 32px rgb(20 18 14 / 0.12);
+  /* Graph floating-glass chrome — contained soft float (toolbar/legend/chip). */
+  --shadow-aq-float: 0 4px 14px -8px rgb(20 18 14 / 0.25);
+  /* Graph deep layered float — layout dropdown + detail panel. */
+  --shadow-aq-panel: 0 24px 60px -28px rgb(20 18 14 / 0.4), 0 2px 8px -4px rgb(20 18 14 / 0.1);
+
+  /* ───────────────────────── MOTION ───────────────────────── */
+  /* Durations + easings shared across all transitions. Mirrors the Figma
+     aq/Motion variable collection so animation timing stays in lockstep
+     between design and code. */
+
+  --duration-aq-fast: 120ms;
+  --duration-aq-base: 200ms;
+  --duration-aq-slow: 320ms;
+
+  --ease-aq-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-aq-inout: cubic-bezier(0.45, 0, 0.55, 1);
+
+  /* ───────────────────────── Z-INDEX ───────────────────────── */
+  /* Layering grammar — lower number sits behind. Stepped by 5 so values
+     can slot in without renumbering the stack. */
+
+  --z-aq-sticky: 30;
+  --z-aq-drawer: 40;
+  /* 45 reserved for the mobile floating command pill (literal z-[45] in the
+     shell): above the drawer scrim, below modals/popovers. */
+  --z-aq-overlay: 50;
+  --z-aq-modal: 50;
+  --z-aq-popover: 55;
+  --z-aq-toast: 60;
+
+  /* ───────────────────────── FOCUS ───────────────────────── */
+  /* Focus ring colour aliases the accent token so it auto-themes in dark
+     mode. Width + offset are numeric so utilities can compose them. */
+
+  --focus-aq-ring-color: var(--color-aq-accent);
+  --focus-aq-ring-width: 2px;
+  --focus-aq-ring-offset: 2px;
+
+  /* ───────────────────────── ICON SIZE ───────────────────────── */
+  /* Standard icon sizes. Use these instead of raw size={11/13/14/16} which
+     was scattered across the codebase. */
+
+  --icon-aq-xs: 10px;
+  --icon-aq-sm: 12px;
+  --icon-aq-md: 14px;
+  --icon-aq-lg: 16px;
+
+  /* ───────────────────────── AVATAR SIZE ───────────────────────── */
+  /* Avatar circle sizes. Match the Figma Avatar variant axis. */
+
+  --avatar-aq-xs: 20px;
+  --avatar-aq-sm: 28px;
+  --avatar-aq-md: 32px;
+  --avatar-aq-lg: 40px;
+  --avatar-aq-xl: 56px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Dark theme — values mirror the dark-mode column from the Foundations Figma
+ * library (and from the Dark Panel family). Activated by setting
+ * data-theme="dark" on the <html> element. The personal Appearance settings
+ * page wires this up via the useTheme() hook.
+ * ────────────────────────────────────────────────────────────────────────── */
+html[data-theme='dark'] {
+  --color-aq-bg: #0e0e10;
+  --color-aq-surface: #18181b;
+  --color-aq-zebra: #1c1c20;
+  --color-aq-border: #2a2a30;
+  --color-aq-border-strong: #404048;
+  --color-aq-ink: #fbfbfb;
+  --color-aq-ink-soft: #c9c6bf;
+  --color-aq-ink-muted: #9f9c95;
+  --color-aq-ink-faint: #6f6c66; /* faintest on dark: dimmer than muted */
+  /* Supabase-style accent grammar in dark mode:
+       - Brand orange stays on `accent` so primary buttons (`bg-aq-accent`)
+         and focus rings (`var(--color-aq-accent)`) still punch through
+         as the brand colour.
+       - Selection backgrounds (`accent-soft`) flip to a neutral raised
+         grey — selected nav items now read as subdued surfaces, not loud
+         orange tints.
+       - Selected text colour (`accent-strong`) flips to near-white so the
+         label reads cleanly on the grey wash.
+     Net effect: orange is reserved for actions; grey carries selection. */
+  --color-aq-accent: #ff7a3a;
+  --color-aq-accent-soft: #27272a;
+  --color-aq-accent-strong: #e4e4e7;
+
+  /* Accent tint family in dark mode — a deep warm wash + light warm text so
+     the orange selection read survives on the dark page without glaring. */
+  --color-aq-accent-wash: #2e1c10;
+  --color-aq-accent-deep: #ff9a5c;
+  --color-aq-accent-line: #50331f;
+  --color-aq-good: #4caf50;
+  --color-aq-good-soft: #1e3a20;
+  --color-aq-warn: #d4a017;
+  --color-aq-warn-soft: #3a3008;
+  --color-aq-bad: #ef5350;
+  --color-aq-bad-soft: #3a1414;
+
+  /* Info family — light-mode tokens were the only tone missing a dark
+     override, so Banner/PageState with tone=info rendered as a bright sky
+     patch on the dark page. Pair info text + soft bg the same way the
+     other status families are paired. */
+  --color-aq-info: #60a5fa;
+  --color-aq-info-soft: #1a2942;
+
+  /* Scrim — bump opacity so the modal/drawer overlay actually darkens the
+     already-dark page. Switching from ink-panel to pure black at higher
+     opacity gives a perceptible separation while staying neutral. */
+  --color-aq-scrim: rgb(0 0 0 / 0.65);
+
+  /* Toast surface flips to a raised dark (lighter than page) in dark mode
+     so the bottom-center confirmation chip reads against the bg. */
+  --color-aq-toast-bg: #2a2a30;
+  --color-aq-toast-fg: #fbfbfb;
+  --color-aq-toast-border: rgb(255 255 255 / 0.08);
+
+  /* AI authoring accent — lifted values for dark mode. */
+  --color-aq-ai-from: #8d72ff;
+  --color-aq-ai-to: #ff8a52;
+
+  /* AI policy composer — dark-mode surfaces. The well sits just above the dark
+   * surface; the send chip flips to a light chip; mention hues lift for contrast. */
+  --color-aq-compose-well: #232327;
+  --color-aq-compose-send: #e4e4e7;
+  --color-aq-compose-ink: #ededed;
+  --color-aq-compose-mention-mcp: #e98cec;
+  --color-aq-compose-mention-tool: #a892f2;
+}
+
+/* Density swap — compact tightens card padding by ~25%. Activated by setting
+ * data-density="compact" on <html>. Comfortable (default) needs no override. */
+html[data-density='compact'] {
+  --spacing-4_5: 0.875rem; /* 18 → 14 */
+  --spacing-5_5: 1.125rem; /* 22 → 18 */
+}

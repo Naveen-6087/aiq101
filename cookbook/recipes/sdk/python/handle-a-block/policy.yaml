@@ -1,0 +1,38 @@
+# ArmorIQ Policy Profile for the release-desk MCP Server
+# Author this in Platform -> Policies -> Policy Studio -> Single Policy
+# (Target Type: mcp_server, Target ID: your registered release-desk server's
+# id) and paste these rules into the YAML editor there. The offline stand-in
+# in offline/ reads this same file, so editing a rule changes the offline run.
+name: release-desk-policy
+version: v0.1.0
+scope:
+  target_type: mcp
+  target: release-desk   # replace with the registered release-desk MCP server id
+  caller: all
+default_action: block
+priority: 50
+rules:
+  # Reads -> ALLOW
+  - tool: list_environments
+    action: allow
+  - tool: get_build_status
+    action: allow
+
+  # Low risk writes: repeat a test run, ship to staging, file a ticket -> ALLOW
+  - tool: rerun_ci
+    action: allow
+  - tool: run_smoke_tests
+    action: allow
+  - tool: deploy_to_staging
+    action: allow
+  - tool: request_teardown
+    action: allow
+
+  # Customer facing -> HOLD (a human approves every production deploy)
+  - tool: deploy_to_production
+    action: hold
+
+  # Irreversible -> BLOCK (default_action already blocks it; listed so the
+  # intent is auditable in the file and survives a looser default)
+  - tool: delete_environment
+    action: block

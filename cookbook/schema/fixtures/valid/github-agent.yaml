@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../recipe.schema.json
+schema: 1
+title: Build a GitHub Agent with the ArmorIQ SDK
+summary: A CLI agent that searches, reads, and explores a GitHub repository through the GitHub MCP server, with every tool call checked against policy.
+framework: sdk
+language: typescript
+variant: js
+tier: official
+products: [sdk, policies, mcp-registration]
+use_case: devtools
+tags: [github, mcp, cli]
+demonstrates: [allow, block]
+authors: [Fuzailkazi]
+tested_with:
+  "@armoriq/sdk": "0.6.10"
+requires:
+  services: [armoriq, github, gemini]

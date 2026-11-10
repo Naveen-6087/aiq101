@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Build a Strands Agent with the ArmorIQ SDK
+summary: A support-desk assistant on AWS Strands Agents where reads and replies are allowed, refunds wait for human approval, closing an account is blocked, and a planted prompt injection ticket goes nowhere.
+framework: strands
+language: python
+tier: community
+products: [sdk, policies, approvals, mcp-registration]
+use_case: support-ops
+tags: [strands, support-desk, mcp, human-approval]
+demonstrates: [allow, hold, block, prompt-injection]
+authors: [Naveen-6087]
+tested_with:
+  "armoriq-sdk": "0.6.10"
+requires:
+  services: [armoriq, gemini]

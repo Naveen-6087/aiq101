@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Apply the ArmorOps Policy Pack to Claude Code with ArmorClaude
+summary: A ready ArmorClaude policy for cloud and infra work that lets kubectl, aws, and terraform reads run, holds state changes, and blocks irreversible deletes.
+framework: claude-code
+language: config
+tier: community
+products: [armorclaude, armorcodex, policies, approvals]
+use_case: coding-agent
+tags: [policy-pack, kubernetes, terraform, aws, infra]
+demonstrates: [allow, hold, block]
+authors: [Naveen-6087]
+secondary:
+  frameworks: [codex]

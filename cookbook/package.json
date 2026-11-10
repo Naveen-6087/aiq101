@@ -1,0 +1,22 @@
+{
+  "name": "armoriq-cookbook-tools",
+  "private": true,
+  "type": "module",
+  "description": "Repo tooling for the ArmorIQ Cookbook: manifest schema, validator, and index generator. Recipes have their own package.json files.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test:schema": "node schema/check.mjs",
+    "validate": "node tools/validate.mjs",
+    "index": "node tools/build-index.mjs",
+    "index:check": "node tools/build-index.mjs --check",
+    "check": "npm run test:schema && npm run validate && npm run index:check",
+    "check:recipes": "node tools/check-recipe.mjs",
+    "serve": "node tools/server.mjs"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "js-yaml": "4.3.2"
+  }
+}

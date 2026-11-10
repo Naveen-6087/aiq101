@@ -1,0 +1,12 @@
+# expect: tested_with
+schema: 1
+title: Summarize a repo with the raw SDK
+summary: A Python agent that summarizes a repository with every tool call checked against policy.
+framework: sdk
+language: python
+tier: community
+products: [sdk]
+use_case: devtools
+authors: [octocat]
+tested_with:
+  armoriq-sdk: "^0.6.10"

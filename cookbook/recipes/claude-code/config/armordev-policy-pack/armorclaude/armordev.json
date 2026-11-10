@@ -1,0 +1,299 @@
+{
+  "schemaVersion": "armor.policy.v1",
+  "kind": "PolicyProfile",
+  "metadata": {
+    "name": "armordev",
+    "description": "ArmorDev: safe software engineering. Secrets quarantined, destructive commands and force or main pushes blocked, publishing and network shell held, tests and builds run freely."
+  },
+  "defaults": {
+    "decision": "allow",
+    "conflictResolution": "deny_overrides"
+  },
+  "statements": [
+    {
+      "id": "forbid-secret-files",
+      "effect": "forbid",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Read",
+          "Write",
+          "Edit",
+          "MultiEdit",
+          "Grep",
+          "Glob"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "file.path",
+          "op": "matches",
+          "value": "(?:^|[\\\\/\\s\"'=:])\\.env(?!\\.(?:example|sample|template)\\b)(?:\\.[\\w.-]+)?(?:$|[\\s\"'`;|&)<>])|(?:^|[\\\\/\\s\"'=:])\\.ssh(?:$|[\\\\/\\s\"'`;|&)<>])|(?:^|[\\\\/\\s\"'=:])\\.aws(?:$|[\\\\/\\s\"'`;|&)<>])|id_(?:rsa|dsa|ecdsa|ed25519)(?:$|[\\s\"'`;|&)<>])|\\.(?:pem|key|p12|pfx)(?:$|[\\s\"'`;|&)<>])|[\\\\/]credentials(?:\\.json)?(?:$|[\\s\"'`;|&)<>])|(?:^|[\\\\/\\s\"'=:])\\.(?:netrc|npmrc|pypirc|git-credentials)(?:$|[\\s\"'`;|&)<>])|\\.docker[\\\\/]config\\.json|\\.kube[\\\\/]config(?:$|[\\s\"'`;|&)<>])"
+        }
+      ]
+    },
+    {
+      "id": "forbid-secret-shell",
+      "effect": "forbid",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "(?:^|[\\\\/\\s\"'=:])\\.env(?!\\.(?:example|sample|template)\\b)(?:\\.[\\w.-]+)?(?:$|[\\s\"'`;|&)<>])|(?:^|[\\\\/\\s\"'=:])\\.ssh(?:$|[\\\\/\\s\"'`;|&)<>])|(?:^|[\\\\/\\s\"'=:])\\.aws(?:$|[\\\\/\\s\"'`;|&)<>])|id_(?:rsa|dsa|ecdsa|ed25519)(?:$|[\\s\"'`;|&)<>])|\\.(?:pem|key|p12|pfx)(?:$|[\\s\"'`;|&)<>])|[\\\\/]credentials(?:\\.json)?(?:$|[\\s\"'`;|&)<>])|(?:^|[\\\\/\\s\"'=:])\\.(?:netrc|npmrc|pypirc|git-credentials)(?:$|[\\s\"'`;|&)<>])|\\.docker[\\\\/]config\\.json|\\.kube[\\\\/]config(?:$|[\\s\"'`;|&)<>])"
+        }
+      ]
+    },
+    {
+      "id": "forbid-destructive-shell",
+      "effect": "forbid",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "\\brm\\s+(?:[^;&|\\n]*\\s)?(?:-[a-zA-Z]*[rR][a-zA-Z]*|--recursive)(?:\\s|$)|\\bgit\\s+reset\\s+(?:[^;&|\\n]*\\s)?--hard\\b|\\bgit\\s+clean\\s+(?:[^;&|\\n]*\\s)?-[a-zA-Z]*f|\\bdd\\s+[^;&|\\n]*\\bof=|\\bmkfs(?:\\.\\w+)?\\b|\\b(?:shred|wipefs)\\b|>\\s*/dev/(?:sd|nvme|disk)|\\bRemove-Item\\b[^;|\\n]*-Recurse"
+        }
+      ]
+    },
+    {
+      "id": "forbid-force-push",
+      "effect": "forbid",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "\\bgit\\s+push\\b[^;&|\\n]*(?:\\s--force(?:-with-lease)?\\b|\\s-[a-zA-Z]*f\\b|\\s\\+[\\w./-]+)"
+        }
+      ]
+    },
+    {
+      "id": "forbid-push-protected-branch",
+      "effect": "forbid",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "\\bgit\\s+push\\b[^;&|\\n]*[\\s:](?:main|master)(?:$|[\\s;&|])"
+        }
+      ]
+    },
+    {
+      "id": "forbid-pipe-to-shell",
+      "effect": "forbid",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "\\b(?:curl|wget)\\b[^;&\\n]*\\|\\s*(?:sudo\\s+)?(?:env\\s+)?(?:ba|z|da|k|fi)?sh\\b|\\b(?:curl|wget)\\b[^;&\\n]*\\|\\s*(?:sudo\\s+)?(?:python3?|node|perl|ruby)\\b|\\b(?:ba|z)?sh\\s+(?:-c\\s+)?[\"']?\\$\\(\\s*(?:curl|wget)\\b|\\b(?:ba|z)?sh\\s+<\\(\\s*(?:curl|wget)\\b|\\b(?:iwr|irm|Invoke-WebRequest|Invoke-RestMethod)\\b[^;\\n]*\\|\\s*(?:iex|Invoke-Expression)\\b"
+        }
+      ]
+    },
+    {
+      "id": "hold-package-publish",
+      "effect": "require_approval",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "\\b(?:npm|pnpm|yarn|bun)\\s+(?:[^;&|\\n]*\\s)?publish\\b|\\bcargo\\s+publish\\b|\\btwine\\s+upload\\b|\\b(?:poetry|flit|hatch|uv)\\s+publish\\b|\\bgem\\s+push\\b|\\bgh\\s+release\\s+create\\b|\\bdocker\\s+push\\b|\\bdotnet\\s+nuget\\s+push\\b"
+        }
+      ]
+    },
+    {
+      "id": "hold-network-shell",
+      "effect": "require_approval",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "\\b(?:curl|wget|nc|ncat|netcat|socat|scp|sftp|rsync|ssh|ftp|telnet|iwr|Invoke-WebRequest|Invoke-RestMethod)\\b"
+        }
+      ]
+    },
+    {
+      "id": "hold-unlisted-shell",
+      "effect": "require_approval",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "not_matches",
+          "value": "^(?:(?:npm|pnpm|yarn|bun)\\s+(?:run\\s+)?(?:test|build|lint|typecheck|check|format)\\b|npm\\s+ci\\b|npx\\s+(?:tsc|jest|vitest|eslint|prettier|playwright\\s+test)\\b|(?:pytest|tsc|jest|vitest|eslint|prettier|ruff|mypy|black|flake8|make)\\b|python3?\\s+-m\\s+(?:pytest|unittest|mypy|ruff|build)\\b|go\\s+(?:test|build|vet)\\b|cargo\\s+(?:test|build|check|clippy|fmt)\\b|(?:mvn|gradle|\\./gradlew)\\s+(?:test|build|verify|package|check)\\b|dotnet\\s+(?:test|build)\\b|node\\s+--test\\b|git\\s+(?:status|diff|log|show|branch|add|commit|fetch)\\b|(?:ls|pwd|cat|head|tail|wc|grep|rg|tree|which|echo)\\b)[^;&|`$()<>\\n\\r]*(?:\\|\\s*(?:grep|head|tail|wc|sort|uniq|jq|less|cat)\\b[^;&|`$()<>\\n\\r]*)*$"
+        }
+      ]
+    },
+    {
+      "id": "allow-test-build",
+      "effect": "permit",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Bash",
+          "PowerShell"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": [
+        {
+          "field": "bash.raw",
+          "op": "matches",
+          "value": "^(?:(?:npm|pnpm|yarn|bun)\\s+(?:run\\s+)?(?:test|build|lint|typecheck|check|format)\\b|npm\\s+ci\\b|npx\\s+(?:tsc|jest|vitest|eslint|prettier|playwright\\s+test)\\b|(?:pytest|tsc|jest|vitest|eslint|prettier|ruff|mypy|black|flake8|make)\\b|python3?\\s+-m\\s+(?:pytest|unittest|mypy|ruff|build)\\b|go\\s+(?:test|build|vet)\\b|cargo\\s+(?:test|build|check|clippy|fmt)\\b|(?:mvn|gradle|\\./gradlew)\\s+(?:test|build|verify|package|check)\\b|dotnet\\s+(?:test|build)\\b|node\\s+--test\\b|git\\s+(?:status|diff|log|show|branch|add|commit|fetch)\\b|(?:ls|pwd|cat|head|tail|wc|grep|rg|tree|which|echo)\\b)[^;&|`$()<>\\n\\r]*(?:\\|\\s*(?:grep|head|tail|wc|sort|uniq|jq|less|cat)\\b[^;&|`$()<>\\n\\r]*)*$"
+        }
+      ]
+    },
+    {
+      "id": "allow-read-tools",
+      "effect": "permit",
+      "principal": {
+        "type": "agent",
+        "id": "claude-code"
+      },
+      "action": {
+        "type": "tool",
+        "in": [
+          "Read",
+          "Grep",
+          "Glob"
+        ]
+      },
+      "resource": {
+        "type": "workspace",
+        "scope": "current"
+      },
+      "conditions": []
+    }
+  ]
+}

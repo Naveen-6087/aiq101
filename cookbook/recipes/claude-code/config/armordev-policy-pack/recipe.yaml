@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Apply the ArmorDev Policy Pack to Claude Code with ArmorClaude
+summary: A ready ArmorClaude policy for everyday coding that quarantines secrets, blocks destructive commands and pushes to main, holds publishing, and lets tests run.
+framework: claude-code
+language: config
+tier: community
+products: [armorclaude, armorcodex, policies, approvals]
+use_case: coding-agent
+tags: [policy-pack, secrets, git, shell, publishing]
+demonstrates: [allow, hold, block]
+authors: [Naveen-6087]
+secondary:
+  frameworks: [codex]
