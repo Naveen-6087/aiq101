@@ -1,0 +1,90 @@
+# ArmorDev Policy Template (armor.io/v2)
+# Developer safe guardrails: allows standard development tools, tests, and reads,
+# while holding package releases, destructive git resets/force-pushes, and blocking secrets exfiltration.
+
+apiVersion: armor.io/v2
+kind: Policy
+metadata:
+  name: armord-test
+  description: Software development guardrails for coding agents (Claude, Codex, Cursor).
+target:
+  agent: 54d7360d-2548-454f-89fa-ed8b1a1dd438
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: hold
+    rules:
+      # Block AST-detected destructive commands anywhere in pipes or sequences
+      destructive: block
+      
+      Bash:
+        # Pipe-to-shell protection (e.g. curl http... | bash)
+        - when: {pipeToShell: {eq: true}}
+          action: block
+          reason: untrusted code downloaded and piped directly into shell
+          
+        # Obfuscated or multi-layer base64/hex encoding
+        - when: {obfuscated: {eq: true}}
+          action: hold
+          reason: obfuscated shell command detected
+          
+        # Prevent environment variable dumping
+        - when: {envDump: {eq: true}}
+          action: hold
+          reason: full process environment dump attempt
+          
+        # Package publishing require explicit developer approval
+        - when: {args.command: {matches: '(npm|pnpm|yarn)\s+publish|cargo\s+publish|twine\s+upload|poetry\s+publish'}}
+          action: hold
+          reason: package publication to registry requires manual approval
+          
+        # Destructive Git operations
+        - when: {args.command: {matches: 'git\s+(push\s+--force|push\s+-f|reset\s+--hard|clean\s+-[a-zA-Z]*f|checkout\s+\.)'}}
+          action: hold
+          reason: destructive git operation that overwrites history or local uncommitted changes
+          
+        # Safe read-only developer commands run immediately without prompting
+        - when: {args.command: {matches: '^\s*(git\s+(status|diff|log|branch|show)|ls|dir|pwd|cat|head|tail|wc|grep|findstr|npm\s+(test|run\s+test|run\s+lint)|cargo\s+(test|check)|pytest|go\s+test)\b[^;&|$<>`]*$'}}
+          action: allow
+          reason: standard read-only developer command
+          
+        # Safe build & dependency install commands require hold only on first run or external network
+        - when: {args.command: {matches: '^\s*(npm\s+(install|ci|add)|pnpm\s+install|cargo\s+build|go\s+build)\b[^;&|$<>`]*$'}}
+          action: allow
+          reason: standard build/package installation
+          
+  files:
+    deny:
+      - '~/.ssh/**'
+      - '~/.aws/**'
+      - '~/.config/gcloud/**'
+      - '~/.armoriq/**'
+      - '**/.env'
+      - '**/.env.*'
+      - '**/*.pem'
+      - '**/*.key'
+      - '**/id_rsa*'
+      - '**/id_ed25519*'
+      - '**/.netrc'
+      
+  network:
+    default: hold
+    allow:
+      - registry.npmjs.org
+      - pypi.org
+      - files.pythonhosted.org
+      - crates.io
+      - static.crates.io
+      - proxy.golang.org
+      - api.github.com
+      - github.com
+      
+  secrets:
+    envBlocklist:
+      - AWS_SECRET_ACCESS_KEY
+      - GITHUB_TOKEN
+      - OPENAI_API_KEY
+      - ANTHROPIC_API_KEY
+      - ARMORIQ_API_KEY
+      - STRIPE_SECRET_KEY
