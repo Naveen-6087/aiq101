@@ -1,0 +1,34 @@
+# armor-balanced: mirrors ArmorIQ's balanced template. Reads run; Bash, Write and Edit need approval.
+apiVersion: armor.io/v2
+kind: Policy
+metadata:
+  name: armor-balanced
+  description: Read allowed. Bash, Write and Edit require approval; destructive commands blocked.
+target:
+  device: local
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: hold
+    rules:
+      destructive: block
+      Read: allow
+      Grep: allow
+      Glob: allow
+      Bash:
+        - when: {pipeToShell: {eq: true}}
+          action: block
+          reason: downloaded code piped into a shell
+        - action: hold
+      Write: hold
+      Edit: hold
+  files:
+    deny:
+      - '~/.ssh/**'
+      - '~/.aws/**'
+      - '~/.armoriq/**'
+      - '**/.env'
+      - '**/.env.*'
+      - '**/*.pem'
+      - '**/id_rsa*'

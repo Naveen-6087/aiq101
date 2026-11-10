@@ -1,0 +1,37 @@
+# armor-pay: financial agent guardrails in the spirit of ArmorPay's qbo-ap-standard bundle.
+# ArmorPay bundles are enforced server-side; this is a local, offline-testable approximation over
+# generic tool names. Rename the tools to match your MCP server. Amount rules read args.amount.
+apiVersion: armor.io/v2
+kind: Policy
+metadata:
+  name: armor-pay
+  description: Payment agent controls - hold large invoices and payments, block huge or destructive money movement, read freely.
+target:
+  device: local
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: hold
+    rules:
+      get_profit_and_loss: allow
+      get_balance_sheet: allow
+      list_invoices: allow
+      list_vendors: allow
+      create_invoice:
+        - when: {args.amount: {gt: 10000}}
+          action: hold
+          reason: invoice over 10,000 needs approval
+        - action: allow
+      create_payment:
+        - when: {args.amount: {gt: 50000}}
+          action: block
+          reason: payment over 50,000 is never automatic
+        - when: {args.amount: {gt: 5000}}
+          action: hold
+          reason: payment over 5,000 needs approval
+        - action: allow
+      delete_invoice: block
+      delete_vendor: block
+      bulk_payment: hold
+      update_vendor_bank_details: hold

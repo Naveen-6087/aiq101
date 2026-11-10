@@ -1,0 +1,106 @@
+# ArmorOps Policy Template (armor.io/v2)
+# Infrastructure / DevOps safe guardrails: protects cloud environments, Kubernetes clusters,
+# Terraform state, and Docker daemons from destructive autonomous actions.
+
+apiVersion: armor.io/v2
+kind: Policy
+metadata:
+  name: armorops
+  description: Infrastructure & DevOps guardrails for agents running Kubernetes, Terraform, AWS, and Docker.
+target:
+  device: local
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: hold
+    rules:
+      destructive: block
+      
+      Bash:
+        # Prevent pipe-to-shell
+        - when: {pipeToShell: {eq: true}}
+          action: block
+          reason: untrusted code downloaded and piped directly into shell
+          
+        # Obfuscation & env dump
+        - when: {obfuscated: {eq: true}}
+          action: hold
+          reason: obfuscated shell command detected
+        - when: {envDump: {eq: true}}
+          action: hold
+          reason: environment dump attempt
+          
+        # Kubernetes guardrails
+        # Destructive deletions in production or cluster-wide namespaces
+        - when: {args.command: {matches: 'kubectl\s+(delete\s+(ns|namespace|node|pv|pvc)|drain|cordon)'}}
+          action: block
+          reason: cluster-wide destructive kubernetes operation blocked
+        - when: {args.command: {matches: 'kubectl\s+(delete|apply|scale|rollout|patch)\b'}}
+          action: hold
+          reason: state-mutating kubernetes command requires manual approval
+        - when: {args.command: {matches: '^\s*kubectl\s+(get|describe|logs|cluster-info|version|top)\b[^;&|$<>`]*$'}}
+          action: allow
+          reason: read-only kubernetes inspection command
+          
+        # Terraform guardrails
+        - when: {args.command: {matches: 'terraform\s+destroy'}}
+          action: block
+          reason: terraform destroy is prohibited without explicit elevated override
+        - when: {args.command: {matches: 'terraform\s+(apply|state\s+rm|state\s+mv)'}}
+          action: hold
+          reason: terraform infrastructure mutation requires manual approval
+        - when: {args.command: {matches: '^\s*terraform\s+(plan|show|validate|fmt|version|output)\b[^;&|$<>`]*$'}}
+          action: allow
+          reason: read-only terraform planning and inspection
+          
+        # AWS / Cloud CLI guardrails
+        - when: {args.command: {matches: 'aws\s+s3\s+(rb|rm\s+--recursive)'}}
+          action: block
+          reason: bulk bucket deletion blocked
+        - when: {args.command: {matches: 'aws\s+(iam|organizations|kms)\b'}}
+          action: hold
+          reason: cloud IAM/security modification requires manual approval
+        - when: {args.command: {matches: '^\s*aws\s+[a-z0-9-]+\s+(describe|list|get)-[a-z0-9-]+\b[^;&|$<>`]*$'}}
+          action: allow
+          reason: read-only cloud inspection
+          
+        # Docker / Container guardrails
+        - when: {args.command: {matches: 'docker\s+system\s+prune\s+(-a|--all)'}}
+          action: hold
+          reason: docker system prune removes all stopped containers and cached images
+        - when: {args.command: {matches: '^\s*docker\s+(ps|images|logs|inspect|version)\b[^;&|$<>`]*$'}}
+          action: allow
+          reason: read-only docker container inspection
+          
+  files:
+    deny:
+      - '~/.kube/config'
+      - '~/.aws/credentials'
+      - '~/.config/gcloud/**'
+      - '~/.azure/**'
+      - '**/terraform.tfstate*'
+      - '**/*.tfvars'
+      - '**/.env*'
+      - '**/*.pem'
+      - '**/*.key'
+      
+  network:
+    default: hold
+    allow:
+      - api.github.com
+      - github.com
+      - registry.terraform.io
+      - '*.amazonaws.com'
+      - '*.googleapis.com'
+      - '*.azure.com'
+      
+  secrets:
+    envBlocklist:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_SESSION_TOKEN
+      - ARM_CLIENT_SECRET
+      - GOOGLE_APPLICATION_CREDENTIALS
+      - KUBECONFIG
+      - TF_VAR_*

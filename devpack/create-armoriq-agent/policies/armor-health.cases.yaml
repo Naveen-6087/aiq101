@@ -1,0 +1,7 @@
+cases:
+  - {name: coverage lookup, tool: lookup_member_coverage, expect: allow}
+  - {name: phi export, tool: export_phi, expect: block}
+  - {name: deny claim held, tool: deny_claim, expect: hold}
+  - {name: small approval, tool: approve_claim, args: {amount: 100}, expect: allow}
+  - {name: large approval held, tool: approve_claim, args: {amount: 90000}, expect: hold}
+  - {name: delete member, tool: delete_member_record, expect: block}

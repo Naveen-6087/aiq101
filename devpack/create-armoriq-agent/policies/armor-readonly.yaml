@@ -1,0 +1,26 @@
+# armor-readonly: mirrors ArmorIQ's strict-read-only template. Only Read/Grep/Glob run; everything else is blocked.
+apiVersion: armor.io/v2
+kind: Policy
+metadata:
+  name: armor-readonly
+  description: Only Read, Grep and Glob are allowed. Bash, Write and Edit are blocked.
+target:
+  device: local
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: block
+    rules:
+      Read: allow
+      Grep: allow
+      Glob: allow
+  files:
+    deny:
+      - '~/.ssh/**'
+      - '~/.aws/**'
+      - '~/.armoriq/**'
+      - '**/.env'
+      - '**/.env.*'
+      - '**/*.pem'
+      - '**/id_rsa*'

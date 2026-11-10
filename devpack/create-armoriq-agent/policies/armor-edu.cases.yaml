@@ -1,0 +1,6 @@
+cases:
+  - {name: read student, tool: get_student_record, expect: allow}
+  - {name: grade change held, tool: update_grade, expect: hold}
+  - {name: records export, tool: export_student_records, expect: block}
+  - {name: admin grant, tool: grant_admin_role, expect: block}
+  - {name: unknown held, tool: other_tool, expect: hold}

@@ -1,0 +1,41 @@
+# armor-quality-guardian: mirrors ArmorIQ's quality-guardian template. Read and test freely, gate CI and secrets.
+apiVersion: armor.io/v2
+kind: Policy
+metadata:
+  name: armor-quality-guardian
+  description: Read and test freely, gate CI config and secrets, cautious default.
+target:
+  device: local
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: hold
+    rules:
+      destructive: block
+      Read: allow
+      Grep: allow
+      Glob: allow
+      Bash:
+        - when: {pipeToShell: {eq: true}}
+          action: block
+          reason: downloaded code piped into a shell
+        - when: {args.command: {matches: '^\s*(npm\s+(test|run\s+(test|lint|build))|pytest|cargo\s+(test|check|clippy)|go\s+test|git\s+(status|diff|log))\b[^;&|$<>`]*$'}}
+          action: allow
+        - action: hold
+      Write:
+        - when: {path: {glob: '**/.github/workflows/**'}}
+          action: hold
+          reason: CI workflow change
+        - action: hold
+  files:
+    deny:
+      - '~/.ssh/**'
+      - '~/.aws/**'
+      - '~/.armoriq/**'
+      - '**/.env'
+      - '**/.env.*'
+      - '**/*.pem'
+      - '**/id_rsa*'
+  secrets:
+    envBlocklist: [AWS_SECRET_ACCESS_KEY, GITHUB_TOKEN, NPM_TOKEN, OPENAI_API_KEY, ANTHROPIC_API_KEY, ARMORIQ_API_KEY]

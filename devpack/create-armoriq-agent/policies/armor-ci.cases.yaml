@@ -1,0 +1,9 @@
+cwd: /work/project
+cases:
+  - {tool: Bash, args: {command: "npm ci"}, expect: allow}
+  - {tool: Bash, args: {command: "npm run build"}, expect: allow}
+  - {tool: Bash, args: {command: "make deploy"}, expect: block}
+  - {tool: Write, args: {file_path: src/x.ts}, expect: allow}
+  - {tool: Write, args: {file_path: /etc/x}, expect: block}
+  - {tool: WebFetch, args: {url: "https://evil.example"}, expect: block}
+  - {tool: Read, args: {file_path: .env}, expect: block}

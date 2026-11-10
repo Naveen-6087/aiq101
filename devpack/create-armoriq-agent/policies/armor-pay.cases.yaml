@@ -1,0 +1,9 @@
+cases:
+  - {name: read P&L, tool: get_profit_and_loss, expect: allow}
+  - {name: small invoice, tool: create_invoice, args: {amount: 500}, expect: allow}
+  - {name: large invoice held, tool: create_invoice, args: {amount: 20000}, expect: hold}
+  - {name: payment held, tool: create_payment, args: {amount: 7000}, expect: hold}
+  - {name: huge payment blocked, tool: create_payment, args: {amount: 90000}, expect: block}
+  - {name: delete invoice, tool: delete_invoice, expect: block}
+  - {name: qualified mcp name, tool: mcp__qbo__create_payment, args: {amount: 90000}, expect: block}
+  - {name: unknown tool held, tool: mystery_tool, expect: hold}
