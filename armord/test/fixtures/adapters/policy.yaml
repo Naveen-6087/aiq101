@@ -1,0 +1,37 @@
+# Policy for test/adapters.test.mjs and adapters/openhands/tests: one allow, one hold and one block per tool family.
+apiVersion: armor.io/v2
+kind: Policy
+metadata: {name: adapters}
+target: {device: local}
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: allow
+    rules:
+      destructive: block
+      Bash:
+        - {when: {args.command: {matches: '^make deploy'}}, action: hold, reason: deploy}
+        - action: allow
+      run_terminal_cmd:
+        - {when: {args.command: {matches: '^make deploy'}}, action: hold, reason: deploy}
+        - action: allow
+      run_shell_command:
+        - {when: {args.command: {matches: '^make deploy'}}, action: hold, reason: deploy}
+        - action: allow
+      terminal:
+        - {when: {args.command: {matches: '^make deploy'}}, action: hold, reason: deploy}
+        - action: allow
+      execute_bash:
+        - {when: {args.command: {matches: '^make deploy'}}, action: hold, reason: deploy}
+        - action: allow
+      publish_note: hold
+      delete_note: block
+  files:
+    deny:
+      - '**/.env'
+      - '**/secrets/**'
+  network:
+    default: hold
+    allow: [github.com, docs.example.org]
+    deny: [evil.example]

@@ -1,0 +1,1 @@
+{ "session_id": "8f000000-0000-4000-8000-000000000001", "transcript_path": "/home/u/.gemini/tmp/chat.json", "cwd": "__CWD__", "hook_event_name": "BeforeTool", "timestamp": "2026-11-10T12:00:00.000Z", "tool_name": "mcp_notes_read_note", "tool_input": { "id": "7" }, "mcp_context": { "server_name": "notes", "tool_name": "read_note", "command": "node", "args": ["notes-server.js"] } }
