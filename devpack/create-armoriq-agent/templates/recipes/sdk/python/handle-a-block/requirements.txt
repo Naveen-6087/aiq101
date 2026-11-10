@@ -1,0 +1,5 @@
+armoriq-sdk==0.8.18
+mcp==2.1.1
+google-genai==3.0.0
+python-dotenv==1.2.3
+PyYAML==6.0.3

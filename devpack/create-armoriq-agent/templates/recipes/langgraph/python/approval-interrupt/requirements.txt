@@ -1,0 +1,7 @@
+armoriq-sdk[langchain]==0.8.18
+langchain-core==1.2.31
+langgraph==1.1.6
+langgraph-checkpoint==4.3.1
+langchain-openai==1.1.14
+python-dotenv==1.2.4
+PyYAML==6.0.3

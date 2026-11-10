@@ -1,0 +1,20 @@
+{
+  "name": "armoriq-filesystem-notes-agent",
+  "version": "1.0.0",
+  "description": "Filesystem MCP agent guarded by ArmorIQ intent tokens and hold-for-approval policy",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "demo": "node demo.js",
+    "demo:offline": "node --import ./offline/register.mjs demo.js",
+    "test:offline": "node offline/test.mjs"
+  },
+  "dependencies": {
+    "@armoriq/sdk": "0.6.10",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "js-yaml": "4.3.2"
+  }
+}

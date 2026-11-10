@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Build a LangGraph approval interrupt with the ArmorIQ SDK
+summary: An on-call LangGraph agent where status and log reads run, an ArmorIQ hold on a restart becomes a native interrupt() resumed through the checkpointer, and deleting a volume is blocked.
+framework: langgraph
+language: python
+tier: community
+products: [sdk, policies, approvals, mcp-registration]
+use_case: support-ops
+tags: [langgraph, interrupt, human-in-the-loop, checkpointer, on-call]
+demonstrates: [allow, hold, block]
+authors: [Naveen-6087]
+tested_with:
+  "armoriq-sdk": "0.8.18"
+requires:
+  services: [armoriq, openai]
+secondary:
+  frameworks: [langchain]

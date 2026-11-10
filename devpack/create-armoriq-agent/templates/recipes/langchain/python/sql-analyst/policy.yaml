@@ -1,0 +1,38 @@
+# ArmorIQ Policy Profile for the sql-warehouse MCP Server
+# Author this in Platform -> Policies -> Policy Studio -> Single Policy
+# (Target Type: mcp_server, Target ID: your registered sql-warehouse server's
+# id) - paste these rules into the YAML editor there, it's bidirectional with
+# the form. The offline stand-in reads this same file, so editing a rule here
+# changes the offline result too.
+name: sql-warehouse-policy
+version: v0.1.0
+scope:
+  target_type: mcp
+  target: sql-warehouse   # replace with the registered sql-warehouse MCP server id
+  caller: all
+default_action: block
+priority: 50
+rules:
+  # Read only -> ALLOW
+  - tool: list_tables
+    action: allow
+  - tool: describe_table
+    action: allow
+  - tool: run_select
+    action: allow
+
+  # Writes change business records -> HOLD (a human approves each one)
+  - tool: insert_row
+    action: hold
+  - tool: update_rows
+    action: hold
+
+  # Destructive or data leaving the warehouse -> BLOCK. default_action already
+  # blocks these; they are listed so the intent is auditable in the file and
+  # survives if default_action is ever loosened.
+  - tool: delete_rows
+    action: block
+  - tool: drop_table
+    action: block
+  - tool: export_table
+    action: block

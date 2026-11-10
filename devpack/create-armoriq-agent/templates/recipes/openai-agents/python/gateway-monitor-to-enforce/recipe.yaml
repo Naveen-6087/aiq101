@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Govern an OpenAI Agents SDK Agent with Intent Gateway
+summary: An accounts payable agent on the OpenAI Agents SDK goes from record only, to Monitor mode, to enforced policy by changing nothing but its base URL.
+framework: openai-agents
+language: python
+tier: community
+products: [intent-gateway, policies]
+use_case: finance
+tags: [openai-agents, gateway, monitor-mode, accounts-payable, rollout]
+demonstrates: [allow, block, monitor-mode]
+authors: [Naveen-6087]
+requires:
+  services: [armoriq, openai]

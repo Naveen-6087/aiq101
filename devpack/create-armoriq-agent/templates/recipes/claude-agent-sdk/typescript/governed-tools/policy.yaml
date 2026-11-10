@@ -1,0 +1,19 @@
+# Author in Platform -> Policies -> Policy Studio -> Single Policy
+# (Target Type: mcp_server, Target ID: the id of the "release" server you register for this agent)
+name: release-assistant-policy
+version: v0.1.0
+scope:
+  target_type: mcp
+  target: release
+  caller: all
+default_action: block
+priority: 50
+rules:
+  - tool: list_releases
+    action: allow
+  - tool: get_build_status
+    action: allow
+  - tool: deploy_to_production
+    action: hold
+  - tool: delete_environment
+    action: block

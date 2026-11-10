@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Build a Claude Agent SDK Release Assistant with the ArmorIQ SDK
+summary: A Claude Agent SDK agent whose in-process tools are checked by ArmorIQ in canUseTool, so reads run, deploys wait for approval, and deletes are blocked.
+framework: claude-agent-sdk
+language: typescript
+variant: js
+tier: community
+products: [sdk, policies, approvals]
+use_case: devtools
+tags: [can-use-tool, in-process-mcp, deployments, human-approval]
+demonstrates: [allow, hold, block]
+authors: [Naveen-6087]
+tested_with:
+  "@armoriq/sdk": "0.8.24"
+requires:
+  services: [armoriq, anthropic]

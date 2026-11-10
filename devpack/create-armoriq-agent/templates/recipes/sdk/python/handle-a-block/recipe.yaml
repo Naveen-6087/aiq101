@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Build a Release Agent That Handles Blocks with the ArmorIQ SDK
+summary: A framework free plan, intent token, and invoke loop in Python that deploys builds, waits on a held production deploy, and recovers from blocks, expired tokens, and off plan steps.
+framework: sdk
+language: python
+tier: community
+products: [sdk, policies, approvals, mcp-registration]
+use_case: devtools
+tags: [raw-loop, error-handling, release, mcp, human-approval]
+demonstrates: [allow, hold, block]
+authors: [Naveen-6087]
+tested_with:
+  "armoriq-sdk": "0.8.18"
+requires:
+  services: [armoriq, gemini]

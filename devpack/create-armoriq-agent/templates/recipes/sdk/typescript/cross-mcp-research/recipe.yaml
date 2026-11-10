@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Build a Cross-MCP Research Agent with the ArmorIQ SDK
+summary: One signed plan that reads a file on the filesystem MCP server and stores the summary on the memory MCP server, each step checked by its own server policy.
+framework: sdk
+language: typescript
+variant: js
+tier: community
+products: [sdk, policies, approvals, mcp-registration]
+use_case: research
+tags: [filesystem, memory, mcp]
+demonstrates: [allow, hold, multi-server]
+authors: [Naveen-6087]
+tested_with:
+  "@armoriq/sdk": "0.6.10"
+requires:
+  services: [armoriq]

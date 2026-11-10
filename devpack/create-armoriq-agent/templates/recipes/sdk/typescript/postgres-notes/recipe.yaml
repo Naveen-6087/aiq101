@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Build a Postgres Agent with the ArmorIQ SDK
+summary: A CLI agent that turns plain English into SQL for a Postgres MCP server, with every query held for a human to read before it runs.
+framework: sdk
+language: typescript
+variant: js
+tier: community
+products: [sdk, policies, approvals, mcp-registration]
+use_case: data-access
+tags: [postgres, sql, mcp]
+demonstrates: [hold]
+authors: [Naveen-6087]
+tested_with:
+  "@armoriq/sdk": "0.6.10"
+requires:
+  services: [armoriq]

@@ -1,0 +1,22 @@
+# ArmorIQ policy for the AP clerk agent behind Intent Gateway.
+# Author it in Platform -> Policies -> Policy Studio -> Single Policy, targeting the agent
+# whose id you put in the gateway base URL (/v1/t/<gateway-key>/a/<agent-id>). The gateway
+# checks every tool call the model returns against that agent's active policy.
+name: ap-clerk-policy
+version: v0.1.0
+scope:
+  target_type: agent
+  target: ap-clerk   # replace with your agent's id
+  caller: all
+default_action: block
+priority: 50
+rules:
+  # Reading an invoice moves no money -> ALLOW
+  - tool: lookup_invoice
+    action: allow
+
+  # Paying a supplier moves money -> BLOCK for this agent. A person with payment
+  # rights records it. (default_action already blocks it; listed so the intent
+  # is explicit and survives a looser default.)
+  - tool: record_payment
+    action: block

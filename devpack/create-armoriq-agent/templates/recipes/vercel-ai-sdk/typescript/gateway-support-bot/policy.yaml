@@ -1,0 +1,27 @@
+# ArmorIQ policy for the support bot behind Intent Gateway.
+# Author it in Platform -> Policies -> Policy Studio -> Single Policy, targeting the agent
+# whose id you put in the gateway base URL (/v1/t/<gateway-key>/a/<agent-id>). The gateway
+# checks every tool call Claude returns against that agent's active policy.
+name: support-bot-policy
+version: v0.1.0
+scope:
+  target_type: agent
+  target: support-bot   # replace with your agent's id
+  caller: all
+default_action: block
+priority: 50
+rules:
+  # Reading a customer record -> ALLOW
+  - tool: lookup_customer
+    action: allow
+
+  # Money to a customer -> HOLD. At the gateway a hold works like a block today:
+  # the call is removed and an approval request is created, but approving it does
+  # not release the agent's next attempt yet.
+  - tool: issue_credit
+    action: hold
+
+  # Destructive and irreversible -> BLOCK (default_action already blocks it;
+  # listed so the intent is explicit and survives a looser default)
+  - tool: delete_customer
+    action: block

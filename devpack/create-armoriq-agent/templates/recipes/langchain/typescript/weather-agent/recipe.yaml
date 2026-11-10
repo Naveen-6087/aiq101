@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Build a LangChain Agent with the ArmorIQ SDK
+summary: A LangChain tool calling weather agent governed by the shipped ArmorIQLangChain callback handler, with every tool call the model picks checked against policy.
+framework: langchain
+language: typescript
+variant: js
+tier: community
+products: [sdk, policies, mcp-registration]
+use_case: research
+tags: [langchain, weather, mcp, callback-handler]
+demonstrates: [allow]
+authors: [Naveen-6087]
+tested_with:
+  "@armoriq/sdk": "0.6.10"
+requires:
+  services: [armoriq, gemini]

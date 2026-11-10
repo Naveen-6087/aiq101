@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+# Created on first run from db/seed.sql
+analytics.db

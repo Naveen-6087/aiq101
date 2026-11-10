@@ -1,0 +1,17 @@
+{
+  "name": "armoriq-github-agent",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "agent.js",
+  "scripts": {
+    "start": "node agent.js",
+    "demo:offline": "node --import ./offline/register.mjs agent.js",
+    "test:offline": "node offline/test.mjs",
+    "demo:browser": "node offline/test.mjs"
+  },
+  "dependencies": {
+    "@armoriq/sdk": "^0.6.10",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "dotenv": "^18.0.8"
+  }
+}

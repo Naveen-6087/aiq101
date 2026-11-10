@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../../schema/recipe.schema.json
+schema: 1
+title: Build a Crypto Prices Agent with the ArmorIQ SDK
+summary: A crypto prices assistant planned by Gemini, backed by a self built CoinGecko MCP server, with every tool call checked against an ArmorIQ policy.
+framework: sdk
+language: typescript
+variant: js
+tier: community
+products: [sdk, policies, mcp-registration]
+use_case: research
+tags: [crypto, coingecko, mcp, gemini]
+demonstrates: [allow]
+authors: [Naveen-6087]
+tested_with:
+  "@armoriq/sdk": "0.6.10"
+requires:
+  services: [armoriq, gemini, coingecko]

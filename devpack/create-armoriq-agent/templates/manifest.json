@@ -1,0 +1,243 @@
+{
+  "schema": 1,
+  "defaults": {
+    "langchain": {
+      "python": "langchain/python/sql-analyst",
+      "typescript": "langchain/typescript/weather-agent"
+    },
+    "crewai": {
+      "python": "crewai/python/delegated-crew"
+    },
+    "openai-agents": {
+      "python": "openai-agents/python/gateway-monitor-to-enforce"
+    },
+    "vercel-ai-sdk": {
+      "typescript": "vercel-ai-sdk/typescript/gateway-support-bot"
+    },
+    "langgraph": {
+      "python": "langgraph/python/approval-interrupt"
+    },
+    "claude-agent-sdk": {
+      "typescript": "claude-agent-sdk/typescript/governed-tools"
+    },
+    "mcp": {
+      "python": "sdk/python/handle-a-block",
+      "typescript": "sdk/typescript/filesystem-notes"
+    }
+  },
+  "recipes": [
+    {
+      "path": "claude-agent-sdk/typescript/governed-tools",
+      "title": "Build a Claude Agent SDK Release Assistant with the ArmorIQ SDK",
+      "summary": "A Claude Agent SDK agent whose in-process tools are checked by ArmorIQ in canUseTool, so reads run, deploys wait for approval, and deletes are blocked.",
+      "framework": "claude-agent-sdk",
+      "language": "typescript",
+      "services": [
+        "armoriq",
+        "anthropic"
+      ]
+    },
+    {
+      "path": "crewai/python/crypto-crew",
+      "title": "Build a CrewAI Crew with the ArmorIQ SDK",
+      "summary": "A two agent CrewAI crew (a crypto researcher and a writer) wrapped with ArmorIQCrew, with an honest look at its proxy only limits compared with the other framework adapters.",
+      "framework": "crewai",
+      "language": "python",
+      "services": [
+        "armoriq",
+        "gemini",
+        "coingecko"
+      ]
+    },
+    {
+      "path": "crewai/python/delegated-crew",
+      "title": "Build a Delegating CrewAI Crew with the ArmorIQ SDK",
+      "summary": "A two agent CrewAI incident crew where the lead hands its log analyst a narrower delegated token, so the analyst reads metrics and logs but is refused the restart the lead then makes.",
+      "framework": "crewai",
+      "language": "python",
+      "services": [
+        "armoriq",
+        "gemini"
+      ]
+    },
+    {
+      "path": "google-adk/typescript/ops-copilot",
+      "title": "Build a Google ADK Agent with the ArmorIQ SDK",
+      "summary": "An internal ops copilot on Google's Agent Development Kit that refunds a charge, holds a larger credit for human approval, and blocks a prompt injected data export.",
+      "framework": "google-adk",
+      "language": "typescript",
+      "services": [
+        "armoriq",
+        "gemini"
+      ]
+    },
+    {
+      "path": "langchain/python/sql-analyst",
+      "title": "Build a governed SQL analyst with LangChain and the ArmorIQ SDK",
+      "summary": "A LangChain data analyst over a local SQLite MCP server where selects run, inserts and updates wait for approval, and drops, deletes, exports, and a planted injection row are stopped.",
+      "framework": "langchain",
+      "language": "python",
+      "services": [
+        "armoriq",
+        "gemini"
+      ]
+    },
+    {
+      "path": "langchain/typescript/weather-agent",
+      "title": "Build a LangChain Agent with the ArmorIQ SDK",
+      "summary": "A LangChain tool calling weather agent governed by the shipped ArmorIQLangChain callback handler, with every tool call the model picks checked against policy.",
+      "framework": "langchain",
+      "language": "typescript",
+      "services": [
+        "armoriq",
+        "gemini"
+      ]
+    },
+    {
+      "path": "langgraph/python/approval-interrupt",
+      "title": "Build a LangGraph approval interrupt with the ArmorIQ SDK",
+      "summary": "An on-call LangGraph agent where status and log reads run, an ArmorIQ hold on a restart becomes a native interrupt() resumed through the checkpointer, and deleting a volume is blocked.",
+      "framework": "langgraph",
+      "language": "python",
+      "services": [
+        "armoriq",
+        "openai"
+      ]
+    },
+    {
+      "path": "openai-agents/python/gateway-monitor-to-enforce",
+      "title": "Govern an OpenAI Agents SDK Agent with Intent Gateway",
+      "summary": "An accounts payable agent on the OpenAI Agents SDK goes from record only, to Monitor mode, to enforced policy by changing nothing but its base URL.",
+      "framework": "openai-agents",
+      "language": "python",
+      "services": [
+        "armoriq",
+        "openai"
+      ]
+    },
+    {
+      "path": "sdk/python/handle-a-block",
+      "title": "Build a Release Agent That Handles Blocks with the ArmorIQ SDK",
+      "summary": "A framework free plan, intent token, and invoke loop in Python that deploys builds, waits on a held production deploy, and recovers from blocks, expired tokens, and off plan steps.",
+      "framework": "sdk",
+      "language": "python",
+      "services": [
+        "armoriq",
+        "gemini"
+      ]
+    },
+    {
+      "path": "sdk/typescript/cross-mcp-research",
+      "title": "Build a Cross-MCP Research Agent with the ArmorIQ SDK",
+      "summary": "One signed plan that reads a file on the filesystem MCP server and stores the summary on the memory MCP server, each step checked by its own server policy.",
+      "framework": "sdk",
+      "language": "typescript",
+      "services": [
+        "armoriq"
+      ]
+    },
+    {
+      "path": "sdk/typescript/crypto-prices",
+      "title": "Build a Crypto Prices Agent with the ArmorIQ SDK",
+      "summary": "A crypto prices assistant planned by Gemini, backed by a self built CoinGecko MCP server, with every tool call checked against an ArmorIQ policy.",
+      "framework": "sdk",
+      "language": "typescript",
+      "services": [
+        "armoriq",
+        "gemini",
+        "coingecko"
+      ]
+    },
+    {
+      "path": "sdk/typescript/filesystem-notes",
+      "title": "Build a Filesystem Notes Agent with the ArmorIQ SDK",
+      "summary": "A notes assistant on the filesystem MCP server where reads are allowed and every write is held for human approval.",
+      "framework": "sdk",
+      "language": "typescript",
+      "services": [
+        "armoriq",
+        "gemini"
+      ]
+    },
+    {
+      "path": "sdk/typescript/github-agent",
+      "title": "Build a GitHub Agent with the ArmorIQ SDK",
+      "summary": "A CLI agent that searches, reads, and explores a GitHub repository through the GitHub MCP server, with every tool call checked against policy.",
+      "framework": "sdk",
+      "language": "typescript",
+      "services": [
+        "armoriq",
+        "github",
+        "gemini"
+      ]
+    },
+    {
+      "path": "sdk/typescript/github-write-guard",
+      "title": "Build a GitHub Write Guard with the ArmorIQ SDK",
+      "summary": "A GitHub agent where reads run freely, pull requests and file edits wait for human approval, and repository deletion is blocked.",
+      "framework": "sdk",
+      "language": "typescript",
+      "services": [
+        "armoriq",
+        "github",
+        "gemini"
+      ]
+    },
+    {
+      "path": "sdk/typescript/memory-knowledge",
+      "title": "Build a Memory Knowledge Agent with the ArmorIQ SDK",
+      "summary": "A knowledge graph assistant on the memory MCP server where reads are allowed, new facts are held, and memory wipes are blocked.",
+      "framework": "sdk",
+      "language": "typescript",
+      "services": [
+        "armoriq",
+        "gemini"
+      ]
+    },
+    {
+      "path": "sdk/typescript/postgres-notes",
+      "title": "Build a Postgres Agent with the ArmorIQ SDK",
+      "summary": "A CLI agent that turns plain English into SQL for a Postgres MCP server, with every query held for a human to read before it runs.",
+      "framework": "sdk",
+      "language": "typescript",
+      "services": [
+        "armoriq"
+      ]
+    },
+    {
+      "path": "strands/python/support-desk",
+      "title": "Build a Strands Agent with the ArmorIQ SDK",
+      "summary": "A support-desk assistant on AWS Strands Agents where reads and replies are allowed, refunds wait for human approval, closing an account is blocked, and a planted prompt injection ticket goes nowhere.",
+      "framework": "strands",
+      "language": "python",
+      "services": [
+        "armoriq",
+        "gemini"
+      ]
+    },
+    {
+      "path": "vercel-ai-sdk/typescript/gateway-support-bot",
+      "title": "Govern a Vercel AI SDK Support Bot with Intent Gateway",
+      "summary": "A Claude support bot on the Vercel AI SDK whose lookups pass, whose credit and account deletion are stopped by Intent Gateway, and who explains why.",
+      "framework": "vercel-ai-sdk",
+      "language": "typescript",
+      "services": [
+        "armoriq",
+        "anthropic"
+      ]
+    }
+  ],
+  "policies": [
+    "armor-architect",
+    "armor-balanced",
+    "armor-ci",
+    "armor-edu",
+    "armor-health",
+    "armor-lockdown",
+    "armor-pay",
+    "armor-quality-guardian",
+    "armor-readonly",
+    "armordev",
+    "armorops"
+  ]
+}
