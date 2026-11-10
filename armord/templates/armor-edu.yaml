@@ -1,0 +1,24 @@
+# armor-edu: higher-education agent guardrails in the spirit of ArmorEdu bundles (FERPA records,
+# research data, IT privilege). Local approximation over generic tool names.
+apiVersion: armor.io/v2
+kind: Policy
+metadata:
+  name: armor-edu
+  description: Education agent controls - student records read-only, grade and research-data exports held, privileged IT actions blocked.
+target:
+  device: local
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: hold
+    rules:
+      get_course: allow
+      list_students: allow
+      get_student_record: allow
+      update_grade: hold
+      export_student_records: block
+      export_research_dataset: hold
+      reset_password: hold
+      grant_admin_role: block
+      delete_account: block

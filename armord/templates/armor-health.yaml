@@ -1,0 +1,28 @@
+# armor-health: health-insurance agent guardrails in the spirit of ArmorHealth bundles (PHI access,
+# claims, provider networks). Local approximation over generic tool names; rename to your MCP tools.
+apiVersion: armor.io/v2
+kind: Policy
+metadata:
+  name: armor-health
+  description: Health insurance agent controls - PHI exports blocked, claim denials and large approvals held, lookups allowed.
+target:
+  device: local
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: hold
+    rules:
+      lookup_member_coverage: allow
+      search_providers: allow
+      get_claim_status: allow
+      export_phi: block
+      export_member_records: block
+      deny_claim: hold
+      approve_claim:
+        - when: {args.amount: {gt: 25000}}
+          action: hold
+          reason: large claim approval needs a reviewer
+        - action: allow
+      update_member_record: hold
+      delete_member_record: block
