@@ -1,0 +1,16 @@
+{
+  "name": "armord",
+  "owner": { "name": "ArmorIQ community" },
+  "metadata": { "description": "armord: local allow/hold/block decisions for Claude Code tool calls, with ArmorIQ policy (armor.io/v2).", "version": "0.1.0" },
+  "plugins": [
+    {
+      "name": "armord",
+      "source": "./plugins/claude-code",
+      "description": "Gate every Claude Code tool call through the local armord daemon. Needs the armord CLI on PATH (npm i -g @armoriq-labs/armord).",
+      "version": "0.1.0",
+      "category": "security",
+      "tags": ["security", "policy", "audit", "armoriq", "hooks"],
+      "license": "MIT"
+    }
+  ]
+}

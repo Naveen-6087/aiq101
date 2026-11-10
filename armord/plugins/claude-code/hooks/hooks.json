@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [{ "type": "command", "command": "armord hook claude-code", "timeout": 120 }]
+      }
+    ]
+  }
+}

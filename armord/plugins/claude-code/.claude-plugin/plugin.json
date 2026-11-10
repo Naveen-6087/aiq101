@@ -1,0 +1,6 @@
+{
+  "name": "armord",
+  "version": "0.1.0",
+  "description": "Gate every Claude Code tool call through the local armord ArmorIQ decision daemon (allow / hold / block).",
+  "license": "MIT"
+}
