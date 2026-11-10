@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "armord-plan": {
+      "command": "armord",
+      "args": ["mcp-plan", "--host", "cursor"]
+    }
+  }
+}

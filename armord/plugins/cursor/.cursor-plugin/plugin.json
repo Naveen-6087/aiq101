@@ -1,0 +1,6 @@
+{
+  "name": "armord",
+  "version": "0.1.0",
+  "description": "Gate Cursor shell, MCP, file read and write calls through the local armord ArmorIQ decision daemon.",
+  "license": "MIT"
+}

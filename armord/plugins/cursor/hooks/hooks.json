@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [{ "command": "armord hook cursor", "failClosed": true }],
+    "beforeMCPExecution": [{ "command": "armord hook cursor", "failClosed": true }],
+    "beforeReadFile": [{ "command": "armord hook cursor", "failClosed": true }],
+    "preToolUse": [{ "command": "armord hook cursor", "failClosed": true, "matcher": "^(Write|Delete|Grep|Task)$" }]
+  }
+}

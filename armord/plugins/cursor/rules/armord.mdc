@@ -1,0 +1,13 @@
+---
+description: How to behave when armord blocks or holds a tool call
+alwaysApply: true
+---
+
+armord checks shell, MCP, file-read and write calls before they run.
+
+- When a call is denied, do not retry it, reword it, or reach the same effect through another tool.
+  Tell the user what was denied and the reason shown.
+- When Cursor asks the user to approve a call, wait for the answer.
+- Never edit `.cursor/hooks.json`, `.cursor/mcp.json`, or anything under `~/.armoriq/`.
+- Before a multi-step task you may call the `register_intent_plan` tool (server `armord-plan`) with
+  the tools you intend to use; calls outside that plan are refused.
