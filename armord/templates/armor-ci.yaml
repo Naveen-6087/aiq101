@@ -1,0 +1,49 @@
+# armor-ci: for unattended runs where nobody can approve. Nothing holds: it is allow or block.
+apiVersion: armor.io/v2
+kind: Policy
+metadata:
+  name: armor-ci
+  description: Unattended CI agents - tests, lint and builds run, everything else is blocked.
+target:
+  device: local
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: block
+    rules:
+      destructive: block
+      Read: allow
+      Grep: allow
+      Glob: allow
+      Edit:
+        - when: {withinWorkspace: {eq: true}}
+          action: allow
+        - action: block
+      Write:
+        - when: {withinWorkspace: {eq: true}}
+          action: allow
+        - action: block
+      Bash:
+        - when: {args.command: {matches: '^\s*(npm\s+(ci|test|run\s+(test|lint|build))|pytest|cargo\s+(test|check|build)|go\s+(test|build)|git\s+(status|diff|log))\b[^;&|$<>`]*$'}}
+          action: allow
+        - action: block
+          reason: not on the CI allowlist
+  files:
+    deny:
+      - '~/.ssh/**'
+      - '~/.aws/**'
+      - '~/.armoriq/**'
+      - '**/.env'
+      - '**/.env.*'
+      - '**/*.pem'
+      - '**/id_rsa*'
+  network:
+    default: block
+    allow:
+      - registry.npmjs.org
+      - pypi.org
+      - files.pythonhosted.org
+      - github.com
+  secrets:
+    envBlocklist: [AWS_SECRET_ACCESS_KEY, GITHUB_TOKEN, NPM_TOKEN, ARMORIQ_API_KEY]

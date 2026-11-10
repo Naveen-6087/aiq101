@@ -1,0 +1,45 @@
+# armor-architect: mirrors ArmorIQ's architect template. Explore wide, write inside the workspace, never destroy.
+apiVersion: armor.io/v2
+kind: Policy
+metadata:
+  name: armor-architect
+  description: Explore wide, write inside the workspace, never destroy.
+target:
+  device: local
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: hold
+    rules:
+      destructive: block
+      Read: allow
+      Grep: allow
+      Glob: allow
+      WebSearch: allow
+      Write:
+        - when: {withinWorkspace: {eq: true}}
+          action: allow
+        - action: hold
+          reason: write outside the workspace
+      Edit:
+        - when: {withinWorkspace: {eq: true}}
+          action: allow
+        - action: hold
+          reason: edit outside the workspace
+      Bash:
+        - when: {pipeToShell: {eq: true}}
+          action: block
+          reason: downloaded code piped into a shell
+        - when: {args.command: {matches: '^\s*(ls|pwd|cat|head|tail|wc|git\s+(status|diff|log|show)|npm\s+(test|run\s+test)|pytest|cargo\s+(test|check))\b[^;&|$<>`]*$'}}
+          action: allow
+        - action: hold
+  files:
+    deny:
+      - '~/.ssh/**'
+      - '~/.aws/**'
+      - '~/.armoriq/**'
+      - '**/.env'
+      - '**/.env.*'
+      - '**/*.pem'
+      - '**/id_rsa*'

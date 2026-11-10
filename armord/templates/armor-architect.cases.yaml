@@ -1,0 +1,8 @@
+cwd: /work/project
+cases:
+  - {tool: Read, args: {file_path: src/a.ts}, expect: allow}
+  - {tool: Write, args: {file_path: src/new.ts}, expect: allow}
+  - {tool: Write, args: {file_path: /etc/hosts}, expect: hold}
+  - {tool: Bash, args: {command: git status}, expect: allow}
+  - {tool: Bash, args: {command: make deploy}, expect: hold}
+  - {tool: Bash, args: {command: "git reset --hard HEAD~1"}, expect: block}
