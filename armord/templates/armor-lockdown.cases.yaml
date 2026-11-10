@@ -1,0 +1,6 @@
+cwd: /work/project
+cases:
+  - {tool: Read, args: {file_path: src/a.ts}, expect: hold}
+  - {tool: Bash, args: {command: ls}, expect: hold}
+  - {tool: Bash, args: {command: "rm -rf /"}, expect: block}
+  - {tool: Read, args: {file_path: "~/.aws/credentials"}, expect: block}

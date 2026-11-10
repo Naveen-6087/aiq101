@@ -1,0 +1,7 @@
+cwd: /work/project
+cases:
+  - {tool: Read, args: {file_path: src/a.ts}, expect: allow}
+  - {tool: Grep, args: {pattern: x}, expect: allow}
+  - {tool: Bash, args: {command: ls}, expect: block}
+  - {tool: Write, args: {file_path: a.txt}, expect: block}
+  - {tool: Read, args: {file_path: "~/.ssh/id_rsa"}, expect: block}

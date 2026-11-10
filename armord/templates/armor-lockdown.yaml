@@ -1,0 +1,24 @@
+# armor-lockdown: mirrors ArmorIQ's lockdown template. Every tool call needs approval, nothing is auto-allowed.
+apiVersion: armor.io/v2
+kind: Policy
+metadata:
+  name: armor-lockdown
+  description: All tools require approval. Nothing auto-allowed; destructive commands blocked.
+target:
+  device: local
+spec:
+  expiresAt: never
+  approvalDefaults: {approvers: 1, anyMember: true}
+  tools:
+    default: hold
+    rules:
+      destructive: block
+  files:
+    deny:
+      - '~/.ssh/**'
+      - '~/.aws/**'
+      - '~/.armoriq/**'
+      - '**/.env'
+      - '**/.env.*'
+      - '**/*.pem'
+      - '**/id_rsa*'
